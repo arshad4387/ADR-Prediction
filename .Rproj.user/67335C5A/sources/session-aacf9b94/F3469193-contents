@@ -80,6 +80,11 @@ The primary source of data are collected from DGIdb 4.0, SIDER 4.1 and PubChem d
 2.  Chemical fingerprints: Data from PubChem database, generated to the binary matrix form.
 3.  Drug & side effects: Drug along with it's side effects are extracted from SIDER 4.1 database.
 
+```{r, include=FALSE}
+dgi <- read.csv("cpi_ireland.csv")
+
+```
+
 The syntax in this poster template and the `posterdown` package uses the same workflow approach as the R Markdown you know and love.
 
 You can even use the bibliography the same way: Our data were taken from a cluster-randomised trial [^2], available from the [Irish Social Science Data Archive](https://www.ucd.ie/issda/data/).
