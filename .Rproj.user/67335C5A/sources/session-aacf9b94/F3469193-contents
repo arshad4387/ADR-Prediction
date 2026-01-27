@@ -63,7 +63,7 @@ library(kableExtra)
 
 <!-- You can add references by inserting the following ^[reference details here] -->
 
-Adverse drug reactions (ADRs) are a common problem in clinical and pharmacovigilance research and can lead to serious patient harm and biased conclusions if modelled poorly. Sparse, noisy, and highly imbalanced drug–ADR data often cause standard machine learning methods to perform no better than naïve frequency‑based approaches, unless appropriate low‑rank and kernel‑based methods are used with clear assumptions.
+Adverse drug reactions (ADRs) are a common problem in clinical and pharmacovigilance research and can lead to serious patient harm and biased conclusions if modelled poorly. Sparse, noisy, and highly imbalanced drug ADR data often cause standard machine learning methods to perform no better than naïve frequency‑based approaches, unless appropriate low‑rank and kernel‑based methods are used with clear assumptions.
 [^1]: https://doi.org/10.1093/bioadv/vbae009
 
 ## Objectives of Project
