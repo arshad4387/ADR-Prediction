@@ -1,0 +1,171 @@
+
+###########################################################################
+#
+# An example of a Classic workflow in bioinformatics and data science. 
+
+# Using purrr with nested data frames allows you to scale a simple analysis
+# to thousands of groups (in this case, genes)
+# while keeping your workspace organised.
+#
+###########################################################################
+
+
+# Load the libraries needed
+
+library(tidyverse)
+library(broom)
+
+
+# 1. Simulate the Data
+set.seed(42) # For reproducibility
+
+n_genes <- 1000
+n_subjects_per_group <- 500
+
+# Create a long-format genes.df frame
+genes.df <- expand.grid(
+  Gene = paste0("Gene_", 1:n_genes),
+  Subject = 1:(2 * n_subjects_per_group)
+) %>%
+  mutate(
+    Group = if_else(Subject <= n_subjects_per_group, "Case", "Control"),
+    # Simulating some random noise + a small effect for the first 50 genes
+    Expression = rnorm(n(), mean = 0, sd = 1) + 
+      if_else(Group == "Case" & as.numeric(gsub("Gene_", "", Gene)) <= 50, 0.5, 0)
+  )
+
+
+
+head(genes.df)
+
+genes.df %>% group_by(Gene) %>% summarise(n = n())
+
+table(genes.df$Gene)
+
+
+genes.df %>% group_by(Gene, Group) %>% summarise(n = n())
+
+
+# 2. The Nest-Map-Tidy Workflow
+
+
+results <- genes.df %>%
+  group_by(Gene) %>%
+  nest() %>%    
+  mutate(
+    test_results = map(
+      data,
+      ~ t.test(Expression ~ Group, data = .x) # note that this is an  anonymous function on .x  
+    ),
+    tidied = map(test_results, tidy)
+  ) %>%
+  unnest(tidied) %>%
+  select(Gene, statistic, p.value) %>%
+  ungroup() %>%
+  mutate(p.adj = p.adjust(p.value, method = "BH"))
+
+head(results)
+
+
+
+# tidy converts that into a consistent one-row data frame.
+
+# p.adjust(): We use the Benjamini-Hochberg ("BH") method 
+# to control the False Discovery Rate (FDR).
+
+#########################################################
+#
+# Visualise using a Volcano plot
+# because it plots biological significance (the effect size) 
+# against statistical significance (the p-value).
+# In a typical volcano plot, we transform the p-value using a -log_{10} scale. 
+# This ensures that the most significant genes (the smallest p-values) appear at the top of the plot.
+
+
+-log10(0.50)
+-log10(0.05)
+-log10(0.01)
+-log10(0.0001)
+
+
+library(ggplot2)
+
+# We need to calculate the difference in means 
+# for the X-axis. Let's add that to our results.
+
+plot_data <- genes.df %>%
+  group_by(Gene, Group) %>%
+  summarise(mean_exp = mean(Expression), .groups = 'drop') %>%
+  pivot_wider(names_from = Group, values_from = mean_exp) %>%
+  mutate(fold_diff = Case - Control) %>%
+  inner_join(results, by = "Gene")
+
+
+
+# Generate the plot
+ggplot(plot_data, aes(x = fold_diff, y = -log10(p.value))) +
+  geom_point(aes(color = p.adj < 0.05), alpha = 0.6) +
+  scale_color_manual(values = c("grey", "red"), name = "Significant (FDR < 0.05)") +
+  theme_minimal() +
+  labs(
+    title = "Gene Expression Volcano Plot",
+    subtitle = "Comparing Case vs Control groups across 1,000 genes",
+    x = "Mean Difference (Case - Control)",
+    y = "-log10(Raw P-value)"
+  ) +
+  geom_vline(xintercept = 0, linetype = "dashed", color = "darkgrey") +
+  geom_hline(yintercept = -log10(0.05), linetype = "dotted")
+
+
+# The "V" Shape: Genes that have a large difference between groups 
+# but low variability will be in the top-left or top-right corners.
+
+# Significance Threshold: The red points represent genes that survived
+# the Benjamini-Hochberg adjustment accounting for testing 1,000 things at once.
+
+# Y-Axis: use -log_{10}(P) because a p-value of 0.001 becomes 3, 
+# while 0.00001$ becomes 5, making the most interesting genes 
+# the easiest to see at the top.
+
+
+#  Add gene labels to the most significant points
+
+
+library(ggrepel)
+
+# 1. Prepare labels: Only label the top 10 most significant genes
+plot_data <- plot_data %>%
+  mutate(label_gene = if_else(rank(p.value) <= 10, Gene, ""))
+
+# 2. Create the enhanced plot
+ggplot(plot_data, aes(x = fold_diff, y = -log10(p.value))) +
+  geom_point(aes(color = p.adj < 0.05), alpha = 0.5) +
+  # Add the repelling labels
+  geom_text_repel(
+    aes(label = label_gene),
+    size = 3.5,
+    box.padding = 0.5, 
+    point.padding = 0.3,
+    segment.color = 'grey50',
+    max.overlaps = Inf # Ensures all 10 labels show up
+  ) +
+  scale_color_manual(values = c("darkgrey", "firebrick"), name = "FDR < 0.05") +
+  theme_classic() +
+  labs(
+    title = "Differential Expression Analysis",
+    subtitle = "Top 10 most significant genes labeled",
+    x = "Mean Difference (Case - Control)",
+    y = "-log10(p-value)"
+  ) +
+  # Adding reference lines for clarity
+  geom_vline(xintercept = c(-0.5, 0.5), linetype = "dashed", alpha = 0.4) +
+  geom_hline(yintercept = -log10(0.05), linetype = "dashed", alpha = 0.4)
+
+
+####################
+
+# Exercise
+# 
+# Use the Wilcoxon Rank Signed Rank Test (i.e. Mann-Whitney Test) to compare
+# the difference in median expression instead of the two sample t-test.
+# wilcox.test()
