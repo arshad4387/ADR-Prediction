@@ -59,20 +59,26 @@ library(plotly)
 library(kableExtra)
 ```
 
-# Background and Problem
+# Background and Objectives
 
 <!-- You can add references by inserting the following ^[reference details here] -->
 
-Adverse drug reactions (ADRs) are a common problem in clinical and pharmacovigilance research and can lead to serious patient harm and biased conclusions if modelled poorly. Sparse, noisy, and highly imbalanced drug–ADR data often cause standard machine learning methods to perform no better than naïve frequency‑based approaches, unless appropriate low‑rank and kernel‑based methods are used with clear assumptions.
+Adverse drug reactions (ADRs) are a common problem in clinical and pharmacovigilance research and can lead to serious patient harm and biased conclusions if modelled poorly. Sparse, noisy, and highly imbalanced drug ADR data often cause standard machine learning methods to perform no better than naïve frequency‑based approaches, unless appropriate low‑rank and kernel‑based methods are used with clear assumptions.
 [^1]: https://doi.org/10.1093/bioadv/vbae009
 
-## Objectives of Project
+## Objectives
 
 1.  Explain the ADR profile prediction problem and its statistical challenges in imbalanced, noisy health data.
 2.  Explore low‑rank and kernel‑based methods (e.g. NMF+kernel regression and alternatives) for ADR prediction.
 3.  Apply these methods to updated drug–ADR datasets with additional molecular and interaction features.
 
 # Data Sources and Datasets
+
+The primary source of data are collected from DGIdb 4.0, SIDER 4.1 and PubChem database.
+
+1.  Drug-gene interaction pair: Intersection of drugs from DGIdb 4.0 and SIDER 4.1, generated to the binary matrix form.
+2.  Chemical fingerprints: Data from PubChem database, generated to the binary matrix form.
+3.  Drug & side effects: Drug along with it's side effects are extracted from SIDER 4.1 database.
 
 The syntax in this poster template and the `posterdown` package uses the same workflow approach as the R Markdown you know and love.
 
