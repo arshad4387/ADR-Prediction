@@ -80,8 +80,10 @@ The primary source of data are collected from DGIdb 4.0, SIDER 4.1 and PubChem d
 2.  Chemical fingerprints: Data from PubChem database, generated to the binary matrix form.
 3.  Drug & side effects: Drug along with it's side effects are extracted from SIDER 4.1 database.
 
-```{r, include=FALSE}
-dgi <- read.csv("cpi_ireland.csv")
+```{r, include=TRUE}
+dgi <- read.csv("Drug_gene_interaction.csv")
+drug_se <- read.csv("Drug_side_effects.csv")
+drug_cf <- read.csv("Chemical_fingerprint.csv")
 
 ```
 
