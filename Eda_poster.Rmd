@@ -93,6 +93,303 @@ drug_se <- read.csv("Drug_side_effects.csv")
 drug_cf <- read.csv("Chemical_fingerprint.csv", row.names = 1)
 ```
 
+```{r}
+library(tidyverse)
+library(reshape2)
+library(pheatmap)
+
+# 1. Load the dataset
+drug_se <- read.csv("Drug_side_effects.csv")
+
+# 2. Keep only necessary columns and remove duplicates
+# This ensures each drug-side effect pair is only counted once
+cleaned_data <- drug_se %>%
+  select(drugbank_name, side_effect_name) %>%
+  distinct()
+
+# 3. Create a binary matrix (Presence/Absence)
+# Rows = Drugs, Columns = Side Effects
+# Value = 1 if the drug has that side effect, 0 otherwise
+binary_matrix <- cleaned_data %>%
+  mutate(value = 1) %>%
+  pivot_wider(names_from = side_effect_name, 
+              values_from = value, 
+              values_fill = 0) %>%
+  column_to_rownames("drugbank_name")
+
+binary_matrix
+# Convert to a matrix for faster math
+mat <- as.matrix(binary_matrix)
+
+
+```
+
+```{r}
+# We use the 'dist' function with method "binary"
+# In R, dist(method="binary") calculates (Total - Common) / Total
+# We subtract this from 1 to get exactly what you asked: Common / Total Unique
+dist_matrix <- dist(mat, method = "binary")
+sim_matrix <- 1 - as.matrix(dist_matrix)
+
+
+# Convert to percentage (0 to 100) as requested
+sim_matrix_pct <- sim_matrix * 100
+
+# Quick Check: The diagonal should be 100 (Drug A vs Drug A)
+print(sim_matrix_pct[1:5, 1:5])
+
+```
+
+```{r}
+# Find the Top 100 drugs with the most side effects to make the plot readable
+top_drugs <- drug_se %>%
+  count(drugbank_name, sort = TRUE) %>%
+  slice_head(n = 100) %>%
+  pull(drugbank_name)
+
+# Subset the similarity matrix
+small_sim_matrix <- sim_matrix_pct[top_drugs, top_drugs]
+
+```
+
+
+```{r}
+# Define a color palette: from white (no shared effects) to deep blue (identical)
+color_palette <- colorRampPalette(c("white", "#f0f0f0", "#3182bd", "#08519c"))(100)
+
+pheatmap(small_sim_matrix,
+         clustering_distance_rows = "euclidean", # Clusters drugs by similarity profile
+         clustering_distance_cols = "euclidean",
+         color = color_palette,
+         main = "Pairwise Drug Similarity (% Shared Side Effects)",
+         fontsize_row = 6,        # Small font to fit 100 names
+         fontsize_col = 6,
+         display_numbers = FALSE,  # Set to TRUE only if plotting < 20 drugs
+         border_color = NA,       # Cleaner look
+         name = "% Similarity")
+
+```
+
+```{r}
+library(tidyverse)
+library(pheatmap)
+
+# 1. Load and clean
+drug_se <- read.csv("Drug_side_effects.csv")
+
+# 2. Create the cross-tabulation (Binary Matrix)
+# We select only the drug name and side effect name to avoid duplicates
+binary_df <- drug_se %>%
+  select(drugbank_name, side_effect_name) %>%
+  distinct() %>%
+  mutate(present = 1) %>%
+  pivot_wider(names_from = side_effect_name, 
+              values_from = present, 
+              values_fill = 0)
+
+# Convert to a pure matrix for math operations
+drug_names <- binary_df$drugbank_name
+mat <- as.matrix(binary_df[,-1])
+rownames(mat) <- drug_names
+
+
+# Matrix multiplication: (Drugs x Effects) x (Effects x Drugs) = (Drugs x Drugs)
+# The resulting cell [i, j] contains the count of shared side effects
+intersection_matrix <- mat %*% t(mat)
+
+# Example: The diagonal [i, i] is the total number of side effects for drug i
+# because a drug shares all its side effects with itself.
+
+
+# 1. Get the total side effect count for each drug (the diagonal of the intersection)
+side_effect_counts <- diag(intersection_matrix)
+
+# 2. Create a matrix of 'Union' values
+# We use 'outer' to create every possible sum of (Count A + Count B)
+sum_matrix <- outer(side_effect_counts, side_effect_counts, "+")
+
+# 3. Union = Sum - Intersection
+union_matrix <- sum_matrix - intersection_matrix
+
+# 4. Calculate Percentage: (Intersection / Union) * 100
+similarity_matrix <- (intersection_matrix / union_matrix) * 100
+
+# Replace any potential NaN (if a drug had 0 side effects) with 0
+similarity_matrix[is.na(similarity_matrix)] <- 0
+
+
+# Get the names of the top 50 drugs by count
+top_50_names <- names(sort(side_effect_counts, decreasing = TRUE)[1:50])
+
+# Subset the similarity matrix
+plot_data <- similarity_matrix[top_50_names, top_50_names]
+
+
+# Custom color palette: Grey (0%) to Dark Blue (100%)
+colors <- colorRampPalette(c("#f7fbff", "#9ecae1", "#084594"))(100)
+
+pheatmap(plot_data,
+         color = colors,
+         main = "Clinical Similarity: % of Shared Side Effects",
+         display_numbers = FALSE, # Set to TRUE if you want to see the numbers in cells
+         fontsize_row = 8,
+         fontsize_col = 8,
+         border_color = "white",
+         angle_col = 45,
+         legend_labels = "% Shared")
+
+
+```
+
+```{r}
+library(tidyverse)
+library(pheatmap)
+
+# --- Step 1: Data Processing ---
+# Load and get distinct pairs
+drug_se <- read.csv("Drug_side_effects.csv")
+binary_df <- drug_se %>%
+  select(drugbank_name, side_effect_name) %>%
+  distinct() %>%
+  mutate(present = 1) %>%
+  pivot_wider(names_from = side_effect_name, values_from = present, values_fill = 0)
+
+# Convert to Matrix
+mat <- as.matrix(binary_df[,-1])
+rownames(mat) <- binary_df$drugbank_name
+
+# --- Step 2: High-Performance Matrix Math ---
+# Calculate Intersection and Union for all 1020 drugs
+intersection_matrix <- mat %*% t(mat)
+side_effect_counts <- diag(intersection_matrix)
+sum_matrix <- outer(side_effect_counts, side_effect_counts, "+")
+union_matrix <- sum_matrix - intersection_matrix
+
+# Calculate % Similarity (Jaccard Index)
+similarity_matrix <- (intersection_matrix / union_matrix) * 100
+similarity_matrix[is.na(similarity_matrix)] <- 0
+
+# --- Step 3: Global Visualization ---
+colors <- colorRampPalette(c("#ffffff", "#deebf7", "#9ecae1", "#3182bd", "#08519c"))(100)
+
+pheatmap(similarity_matrix,
+         cluster_rows = FALSE,      # Keep alphabetical order
+         cluster_cols = FALSE,
+         show_rownames = FALSE,     # 1020 names would overlap
+         show_colnames = FALSE,     # 1020 names would overlap
+         color = colors,
+         main = "Global Clinical Similarity Map (1,020 x 1,020 Drugs)",
+         border_color = NA,         # Remove borders for a smooth 'texture'
+         name = "% Shared ADRs")
+
+```
+
+```{r}
+library(tidyverse)
+
+# 1. Convert the matrix to a 'table' then to a 'data frame'
+# This creates three columns: Drug 1, Drug 2, and the Similarity Percentage
+similarity_table <- as.data.frame(as.table(similarity_matrix))
+
+# 2. Rename the columns for clarity
+colnames(similarity_table) <- c("Drug_1", "Drug_2", "Similarity_Pct")
+
+# 3. Clean the table:
+# - Remove self-comparisons (e.g., Pregabalin vs Pregabalin)
+# - Remove duplicates (If we have Drug A vs Drug B, we don't need Drug B vs Drug A)
+similarity_table_clean <- similarity_table %>%
+  filter(as.character(Drug_1) < as.character(Drug_2)) %>% 
+  filter(Similarity_Pct > 0) %>%
+  arrange(desc(Similarity_Pct))
+
+# View the top results
+# head(similarity_table_clean, 20)
+similarity_table_clean
+
+# Define your threshold (e.g., find drugs that share more than 70% of side effects)
+threshold <- 80
+
+high_similarity_pairs <- similarity_table_clean %>%
+  filter(Similarity_Pct >= threshold)
+
+high_similarity_pairs
+
+```
+```{r}
+threshold <- 85
+keep_drugs <- rownames(similarity_matrix)[apply(similarity_matrix, 1, function(x) any(x >= threshold & x < 100))]
+
+# Subset the matrix to only these drugs
+focused_matrix <- similarity_matrix[keep_drugs, keep_drugs]
+
+# 3. Create the Heatmap
+# We define 100 color breaks from 0 to 100 to fix the scale
+colors <- colorRampPalette(c("#ffffff", "#deebf7", "#9ecae1", "#3182bd", "#08519c"))(100)
+breaks_list <- seq(0, 100, length.out = 101)
+
+pheatmap(focused_matrix,
+         cluster_rows = FALSE,      # No dendrograms
+         cluster_cols = FALSE,
+         show_rownames = TRUE,      # Enable Row Names
+         show_colnames = TRUE,      # Enable Column Names
+         fontsize_row = 6,          # Very small font to fit many names
+         fontsize_col = 6,          # Very small font to fit many names
+         cellwidth = 8,             # Fixed width for each cell (adjust as needed)
+         cellheight = 8,
+         angle_col = 45,            # Tilts the top labels for better spacing
+         color = colors,
+         breaks = breaks_list,      # Forces scale to be exactly 0 to 100
+         main = paste("Drug and side effects similarity (Similarity >=", threshold, "%)"),
+         border_color = NA,         # Remove borders for a smooth pixel look
+         legend_breaks = c(0, 25, 50, 75, 100),
+         legend_labels = c("0%", "25%", "50%", "75%", "100% Shared"))
+
+
+```
+
+
+
+```{r}
+library(tidyverse)
+library(pheatmap)
+
+# --- Step 1: Filter for High Similarity Pairs ---
+# We set a threshold (e.g., 75%) to find very similar drugs
+threshold <- 75
+
+high_sim_drugs <- similarity_table_clean %>%
+  filter(Similarity_Pct >= threshold) %>%
+  # Get a unique list of all drugs involved in these high-similarity pairs
+  select(Drug_1, Drug_2) %>%
+  pivot_longer(cols = everything(), values_to = "drug_name") %>%
+  distinct(drug_name) %>%
+  pull(drug_name)
+
+# --- Step 2: Subset the Matrix ---
+# Now we only take the rows and columns for these specific drugs
+focused_matrix <- similarity_matrix[high_sim_drugs, high_sim_drugs]
+
+# --- Step 3: Plot the Focused Heatmap ---
+colors <- colorRampPalette(c("#f7fbff", "#9ecae1", "#4292c6", "#084594"))(100)
+
+pheatmap(focused_matrix,
+         cluster_rows = TRUE,         # For a small subset, clustering helps see groups
+         cluster_cols = TRUE,
+         color = colors,
+         main = paste("Cluster Analysis of Drugs with >=", threshold, "% Shared ADRs"),
+         fontsize_row = 8,
+         fontsize_col = 8,
+         display_numbers = TRUE,      # We can show the actual percentages now!
+         number_format = "%.0f",      # Rounds to nearest whole number
+         number_color = "black",
+         border_color = "white",
+         name = "% Shared")
+
+
+```
+
+
+
 
 ```{r, include=TRUE}
 
