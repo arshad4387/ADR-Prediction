@@ -39,7 +39,7 @@ div.poster_title{
     break-after: column;
 }
 div.footnotes {
-    font-size: 18pt;
+    font-size: 16pt;
 }
 ```
 
@@ -118,7 +118,7 @@ pheatmap(as.matrix(matrix_data),
 ```
 
 
-```{r fig-adr-distribution, out.width='80%', fig.align='center', fig.cap=' Distribution of side effects per drug', fig.height=4}
+```{r fig-adr-distribution, out.width='80%', fig.align='center', fig.cap=' Distribution of side effects per drug. This histogram illustrates a right-skewed distribution, where the majority of drugs have a relatively low number of side effects, typically clustered between 0 and 200. As the number of side effects increases, the frequency of drugs drops significantly, with few extreme outliers reaching over 800 side effects.', fig.height=4}
 # Load libraries
 library(ggplot2)
 library(dplyr)
@@ -135,10 +135,8 @@ ggplot(drug_burden, aes(x = n)) +
   labs(x = "Number of Side Effects", y = "Number of Drugs") +
   theme_minimal()
 ```
-
-The above graph mentions the drugs majority of the drugs have more than 200 side effects, emphasising the importance of this study.
-
-```{r combined-plot, out.width='80%', fig.align='center', fig.cap='Top 15 drugs with most side effects and top 15 most frequent side effects', fig.height=6}
+<br>
+```{r combined-plot, out.width='80%', fig.align='center', fig.cap='Drugs with most side effects and most frequent side effects', fig.height=6}
 
 # Top 15 drugs with most side effects
 top_drugs <- drug_se %>%
@@ -149,7 +147,7 @@ plot_drugs <- ggplot(top_drugs, aes(x = reorder(drugbank_name, n), y = n)) +
   geom_col(fill = "#440154FF") +  # dark purple
   coord_flip() +
   labs(
-    title = "Top Drugs with Highest Side Effects",
+    title = "Drugs with Max Side Effects",
     subtitle = "Drugs associated with the greatest number of unique ADRs",
     x = "Drug Name", 
     y = "Number of Side Effects"
@@ -169,7 +167,7 @@ plot_side_effects <- ggplot(top_side_effects, aes(x = reorder(side_effect_name, 
   geom_col(fill = "#31688EFF") +  # steel blue
   coord_flip() +
   labs(
-    title = "Top Most Frequent Side Effects",
+    title = "Most Frequent Side Effects",
     subtitle = "Most pervasive clinical symptoms across dataset",
     x = "Side Effect", 
     y = "Frequency (Number of Drugs)"
@@ -184,16 +182,67 @@ plot_side_effects <- ggplot(top_side_effects, aes(x = reorder(side_effect_name, 
 combined_plot <- plot_drugs + plot_side_effects + 
   plot_layout(ncol = 2) +
   plot_annotation(
-    title = "ADR Dataset Overview",
-    subtitle = "Comparison of Top Drugs and Side Effects",
     theme = theme(plot.title = element_text(face = "bold", size = 16))
   )
 combined_plot
 ```
 
-From the dataset, these are the drugs which possess the most side effects displayed alongside the most common side effects.
+```{r Heatmap-plot, out.width='80%', fig.align='center', fig.cap='Drug and side effects similarity. The heatmap reveals high-density clusters (dark blue) where specific drug classes exhibiting similarity in their side-effect profiles', fig.height=6}
+# Heatmap plot
+binary_df <- drug_se %>%
+  select(drugbank_name, side_effect_name) %>%
+  distinct() %>%
+  mutate(present = 1) %>%
+  pivot_wider(names_from = side_effect_name, values_from = present, values_fill = 0)
 
-```{r}
+# Convert to Matrix
+mat <- as.matrix(binary_df[,-1])
+rownames(mat) <- binary_df$drugbank_name
+
+# Calculate Intersection and Union for all 1020 drugs
+intersection_matrix <- mat %*% t(mat)
+side_effect_counts <- diag(intersection_matrix)
+sum_matrix <- outer(side_effect_counts, side_effect_counts, "+")
+union_matrix <- sum_matrix - intersection_matrix
+
+# Calculate % Similarity (Jaccard Index)
+similarity_matrix <- (intersection_matrix / union_matrix) * 100
+similarity_matrix[is.na(similarity_matrix)] <- 0
+
+# Set the threshold
+threshold <- 80
+keep_drugs <- rownames(similarity_matrix)[apply(similarity_matrix, 1, function(x) any(x >= threshold & x < 100))]
+
+# Subset the matrix to only these drugs
+focused_matrix <- similarity_matrix[keep_drugs, keep_drugs]
+
+# We define 100 color breaks from 0 to 100 to fix the scale
+colors <- colorRampPalette(c("#ffffff", "#deebf7", "#9ecae1", "#3182bd", "#08519c"))(100)
+breaks_list <- seq(0, 100, length.out = 101)
+
+pheatmap(focused_matrix,
+         cluster_rows = FALSE,      # No dendrograms
+         cluster_cols = FALSE,
+         show_rownames = TRUE,      # Enable Row Names
+         show_colnames = TRUE,      # Enable Column Names
+         fontsize_row = 6,          # Very small font to fit many names
+         fontsize_col = 6,          # Very small font to fit many names
+         cellwidth = 8,             # Fixed width for each cell (adjust as needed)
+         cellheight = 8,
+         angle_col = 45,            # Tilts the top labels for better spacing
+         color = colors,
+         breaks = breaks_list,      # Forces scale to be exactly 0 to 100
+         main = paste("Drug and side effects similarity (Similarity >=", threshold, "%)"),
+         border_color = NA,         # Remove borders for a smooth pixel look
+         legend_breaks = c(0, 25, 50, 75, 100),
+         legend_labels = c("0%", "25%", "50%", "75%", "100% Shared"))
+
+
+```
+
+
+
+```{r, include=FALSE}
 
 # Prepare Side Effect counts as an annotation dataframe
 se_counts <- drug_se %>%
@@ -278,7 +327,7 @@ div.footnotes {
 
 .images-row img {
   max-width: 100%;
-  margin: 2.5em;
+  margin: 0.3em;
   border: none;
   box-shadow: none;
 }
@@ -301,7 +350,7 @@ knitr::include_graphics(
 cat('</div>')
 
 ```
-
+####
 # Future Work
 
 -   Extended Data set with latest drug available from SIDER 4.1 & DGIdb database [2]
