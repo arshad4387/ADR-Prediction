@@ -57,6 +57,9 @@ options(knitr.table.format = "html")
 library(tidyverse)
 library(plotly)
 library(kableExtra)
+library(dplyr)
+library(ggplot2)
+library(pheatmap)
 ```
 
 # Background and Objectives
@@ -74,22 +77,144 @@ Adverse drug reactions (ADRs) are a common problem in clinical and pharmacovigil
 
 # Data Sources and Datasets
 
-The primary source of data are collected from DGIdb 4.0, SIDER 4.1 and PubChem database.
+The primary source of data are DGIdb 4.0, SIDER 4.1 and PubChem database.
 
 1.  Drug-gene interaction pair: Intersection of drugs from DGIdb 4.0 and SIDER 4.1, generated to the binary matrix form.
 2.  Chemical fingerprints: Data from PubChem database, generated to the binary matrix form.
 3.  Drug & side effects: Drug along with it's side effects are extracted from SIDER 4.1 database.
 
-```{r, include=TRUE}
-dgi <- read.csv("Drug_gene_interaction.csv")
+```{r, include=FALSE}
+#Load the files
+dgi <- read.csv("Drug_gene_interaction.csv", row.names = 1)
 drug_se <- read.csv("Drug_side_effects.csv")
 drug_cf <- read.csv("Chemical_fingerprint.csv")
 
+top_side_effects <- drug_se %>%
+  count(side_effect_name, sort = TRUE) %>%
+  head(25)
+
+ggplot(top_side_effects, aes(x = reorder(side_effect_name, n), y = n)) +
+  geom_bar(stat = "identity", fill = "steelblue") +
+  coord_flip() +
+  labs(title = "Top 25 Most Common Side Effects", x = "Side Effect", y = "Frequency") +
+  theme_minimal()
 ```
 
-The syntax in this poster template and the `posterdown` package uses the same workflow approach as the R Markdown you know and love.
 
-You can even use the bibliography the same way: Our data were taken from a cluster-randomised trial [^2], available from the [Irish Social Science Data Archive](https://www.ucd.ie/issda/data/).
+```{r, include=FALSE}
+
+# To make the heatmap readable, we take the Top 50 drugs and Top 50 side effects
+top_drugs <- drug_se %>% count(drugbank_name) %>% top_n(35, n) %>% pull(drugbank_name)
+top_effects <- drug_se %>% count(side_effect_name) %>% top_n(35, n) %>% pull(side_effect_name)
+
+# Create a binary matrix (1 if side effect exists, 0 otherwise)
+matrix_data <- drug_se %>%
+  filter(drugbank_name %in% top_drugs, side_effect_name %in% top_effects) %>%
+  # SELECT ONLY NECESSARY COLUMNS FIRST
+  select(drugbank_name, side_effect_name) %>%
+  # Ensure no duplicates (1 row per drug-effect pair)
+  distinct() %>%
+  mutate(present = 1) %>%
+  # Now pivot will correctly collapse into one row per drug
+  pivot_wider(names_from = side_effect_name, 
+              values_from = present, 
+              values_fill = 0) %>%
+  column_to_rownames("drugbank_name")
+
+# Plot Heatmap with Dendrograms
+pheatmap(as.matrix(matrix_data), 
+         clustering_distance_rows = "binary", 
+         clustering_distance_cols = "binary",
+         main = "Clustering Drugs by Side Effect Profiles",
+         color = c("white", "firebrick"),
+         fontsize_row = 7, fontsize_col = 7,
+         legend_breaks = c(0, 1), legend_labels = c("No ADR", "ADR Present"))
+```
+
+
+```{r}
+# --- Plot 1: Top 20 Drugs by Side Effect Count ---
+top_20_drugs <- drug_se %>%
+  count(drugbank_name, sort = TRUE) %>%
+  slice_head(n = 15)
+
+ggplot(top_20_drugs, aes(x = reorder(drugbank_name, n), y = n)) +
+  geom_col(fill = "#440154FF") + # Dark purple
+  coord_flip() +
+  labs(title = "Top 20 Drugs with Highest Side Effect Burden",
+       subtitle = "Drugs associated with the greatest number of unique ADRs",
+       x = "Drug Name", 
+       y = "Number of Side Effects") +
+  theme_minimal() +
+  theme(plot.title = element_text(face = "bold"))
+
+```
+The above graph mentions the drugs that has the most side effects.
+```{r}
+# --- Plot 2: Top 20 Most Frequent Side Effects ---
+top_20_side_effects <- drug_se %>%
+  count(side_effect_name, sort = TRUE) %>%
+  slice_head(n = 15)
+
+ggplot(top_20_side_effects, aes(x = reorder(side_effect_name, n), y = n)) +
+  geom_col(fill = "#31688EFF") + # Steel blue
+  coord_flip() +
+  labs(title = "Top 20 Most Frequent Side Effects",
+       subtitle = "The most pervasive clinical symptoms across the entire dataset",
+       x = "Side Effect", 
+       y = "Frequency (Number of Drugs)") +
+  theme_minimal() +
+  theme(plot.title = element_text(face = "bold"))
+```
+The above graph depicts the side effect that was most common among the drugs.
+
+```{r}
+# 1. Load Fingerprints
+drug_cf <- read.csv("Chemical_fingerprint.csv", row.names = 1)
+
+# 2. Prepare Side Effect counts as an annotation dataframe
+se_counts <- drug_se %>%
+  count(drugbank_name) %>%
+  rename("ADR Count" = n) %>%
+  as.data.frame()
+
+# Set drug names as row names for the annotation data
+rownames(se_counts) <- se_counts$drugbank_name
+
+# 3. Align the datasets
+common_drugs <- intersect(rownames(drug_cf), rownames(se_counts))
+subset_drugs <- common_drugs[1:35]
+
+# Create the annotation table for the rows
+row_ann <- se_counts[subset_drugs, "ADR Count", drop = FALSE]
+
+# Create the data matrix
+plot_matrix <- as.matrix(drug_cf[subset_drugs, 1:35])
+
+# 4. Plot
+pheatmap(plot_matrix,
+         annotation_row = row_ann,
+         clustering_distance_rows = "binary",
+         cluster_cols = FALSE,
+         color = c("white", "black"),
+         main = " Drug vs Chemical Structure vs Adverse Drug Reactions",
+         annotation_colors = list("ADR Count" = colorRampPalette(c("yellow", "red"))(50)),
+         fontsize_row = 6, fontsize_col = 6)
+```
+```{r, include=FALSE}
+drug_burden <- drug_se %>%
+  count(drugbank_name, sort = TRUE)
+
+# 2.2 Distribution of side effect counts
+ggplot(drug_burden, aes(x = n)) +
+  geom_histogram(binwidth = 5, fill = "orange", color = "white") +
+  labs(title = "Distribution of Side Effects per Drug", 
+       x = "Number of Side Effects", y = "Number of Drugs") +
+  theme_minimal()
+
+# 2.3 Top 10 drugs with most side effects
+head(drug_burden, 10)
+```
 
 [^2]: Murphy et al. 2005 doi: 10.1186/1468-6708-6-11
 
@@ -117,38 +242,44 @@ ggplot(mpg, aes(displ, hwy, colour = class)) +
   geom_point()
 ```
 
-```{r morefigs, out.width='80%', echo=FALSE, fig.cap='Amazing, right?!', fig.height=4}
+```{css, echo=FALSE}
+div.logo_left{
+  width: 20%;
+}
+div.poster_title{
+  width: 80%;
+}
+div.footnotes {
+    font-size: 18pt;
+}
+.images-row {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  margin: 0.5em 0;
+}
 
-df1 <- data.frame(dose=c("D0.5", "D1", "D2"),
-                len=c(4.2, 10, 29.5))
-ggplot(df1, aes(x=dose, y=len, fill=dose)) +
-  geom_bar(stat="identity") +
-  theme_minimal()
+.images-row img {
+  max-width: 18%;
+  margin: 0.5em;
+  border: none;
+  box-shadow: none;
+}
+
+
 
 ```
 
 You can even make your plots interactive for the HTML version of the poster. You can use the HTML poster for the presentation session, and the PDF poster will be printed - so be sure the static version looks okay.
 
-```{r interactiveplot, out.width='80%', echo=FALSE, fig.cap='Amazing, right?!', fig.height=4}
-
-gapminder <- read_csv("https://raw.githubusercontent.com/datavizpyr/data/master/gapminder-FiveYearData.csv")
-df2 <- gapminder %>%
-  filter(year %in% c(1952,2007)) %>%
-  filter(continent=="Asia") 
-
-df2 <- df2 %>%
-  mutate(paired = rep(1:(n()/2),each=2),
-         year=factor(year))
-
-p <- df2 %>% 
-  ggplot(aes(x= lifeExp, y= country)) +
-  geom_line(aes(group = paired)) +
-  geom_point(aes(color=year), size=4) +
-  theme_bw() +
-  theme(legend.position="top")
-
-
-ggplotly(p)
+```{r images-row, echo=FALSE, results='asis', fig.align='center', out.width='100%'}
+cat('<div class="images-row">')
+knitr::include_graphics(
+  c(
+    "Supporting Documents/output.png"
+  )
+)
+cat('</div>')
 
 ```
 
@@ -158,12 +289,12 @@ ggplotly(p)
 
 We plan to conduct further analysis using:
 
--   Variable discombobulation [^3]
--   Expand our minds with explosive machine learning [^4].
+-   Extended Data set [^3]
+-   New methods using weighted NMF, SVD and weighted SVD [^4].
 
 [^3]: Massey et al. 2005 doi: 15.36.413
 
-[^4]: Smith et al. 1991 doi: 12.36.486
+[^4]: https://doi.org/10.3390/rs13020268
 
 We will use the `plasticanalysis` package for this.
 
