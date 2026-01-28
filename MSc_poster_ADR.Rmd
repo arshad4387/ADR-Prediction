@@ -3,7 +3,10 @@ title: Prediction of ADRs using NMF and Weighted NMFs
 author:
   - name: Arshad Ahamed Shajahan
   - name: Sai Shasank Dandu
+<<<<<<< HEAD
     affil: 
+=======
+>>>>>>> d63ef35872443e689156e15c694db1783f55380d
 affiliation:
   - num: 1
     address: School of Mathematical and Statistical Sciences, University of Galway
@@ -76,7 +79,11 @@ Adverse drug reactions (ADRs) are a common problem in clinical and pharmacovigil
 1.  Explain the ADR profile prediction problem and its statistical challenges in imbalanced, noisy health data.
 2.  Explore low‑rank and kernel‑based methods (e.g. NMF+kernel regression and alternatives) for ADR prediction.
 
+<<<<<<< HEAD
 # Datasets
+=======
+# Data Sources and Descriptive Statistics of Datasets
+>>>>>>> d63ef35872443e689156e15c694db1783f55380d
 
 The primary source of datasets are DGIdb 4.0, SIDER 4.1 and PubChem database.
 
@@ -252,6 +259,17 @@ Naïve frequency model (ADR prevalence per column), kernel regression (KR), line
 
 
 ```{r standard-plot, out.width='80%', fig.align='center', fig.cap='Early Performance of ADR Prediction Methods', fig.height=4}
+<<<<<<< HEAD
+=======
+library(ggplot2)
+
+ggplot(drug_burden, aes(x = n)) +
+  geom_histogram(binwidth = 5, fill = "steelblue", color = "white") +
+  labs(title = "Distribution of ADR Counts per Drug",
+       x = "Number of Adverse Drug Reactions",
+       y = "Number of Drugs") +
+  theme_minimal()
+>>>>>>> d63ef35872443e689156e15c694db1783f55380d
 
 ```
 
@@ -295,7 +313,11 @@ knitr::include_graphics(
 cat('</div>')
 
 ```
+<<<<<<< HEAD
 ####
+=======
+
+>>>>>>> d63ef35872443e689156e15c694db1783f55380d
 
 # Next Project Steps
 
