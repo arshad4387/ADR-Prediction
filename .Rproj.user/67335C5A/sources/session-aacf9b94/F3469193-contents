@@ -237,7 +237,7 @@ knitr::kable(iris[1:10, 1:4], caption = 'Table caption.',align = 'c',"html") %>%
 
 Figure \@ref(fig:standard-plot), and Figure \@ref(fig:morefigs) below show the patterns in our dataset. Make sure that all the details in your plots will be legible when printed (legend text, axis text, and any labels)
 
-```{r standard-plot, out.width='80%', fig.align='center', fig.cap='Great figure!', fig.height=4}
+```{r standard-plot, out.width='80%', fig.align='center', fig.cap='Early Performance of ADR Prediction Methods', fig.height=4}
 ggplot(mpg, aes(displ, hwy, colour = class)) + 
   geom_point()
 ```
@@ -260,8 +260,8 @@ div.footnotes {
 }
 
 .images-row img {
-  max-width: 18%;
-  margin: 0.5em;
+  max-width: 100%;
+  margin: 2.5em;
   border: none;
   box-shadow: none;
 }
@@ -270,7 +270,7 @@ div.footnotes {
 
 ```
 
-You can even make your plots interactive for the HTML version of the poster. You can use the HTML poster for the presentation session, and the PDF poster will be printed - so be sure the static version looks okay.
+Preliminary analysis on the DGI dataset shows that the Naïve baseline and VKR achieve the highest AUROC (≈0.91), while KR and VKR achieve the best AUPR (≈0.41–0.42), clearly outperforming SVM variants on both metrics. VKR therefore provides the best overall trade‑off between discrimination (AUROC) and rare ADR detection (AUPR), motivating its use as the main reference method in further experiments.
 
 ```{r images-row, echo=FALSE, results='asis', fig.align='center', out.width='100%'}
 cat('<div class="images-row">')
@@ -296,12 +296,12 @@ We plan to conduct further analysis using:
 
 [^4]: https://doi.org/10.3390/rs13020268
 
-We will use the `plasticanalysis` package for this.
+We will use the `PYTHON` Programming for this.
 
 
 # GitHub
 
-The code and datasets for this project can be viewed at our GitHub repository here: <https://github.com/>
+The code and datasets for this project can be viewed at our GitHub repository here: <https://github.com/arshad4387/ADR-Prediction.git>
 
 
 
