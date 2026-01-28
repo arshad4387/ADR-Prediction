@@ -2,10 +2,8 @@
 title: Prediction of ADRs using NMF and Weighted NMF
 author:
   - name: Arshad Ahamed Shajahan
-  - name: Sai Shasank Dandu
-    affil: 
+  - name: Sai Shasank Dandu, Supervised by Dr. Davood Roshan
 affiliation:
-  - num: 1
     address: School of Mathematical and Statistical Sciences, University of Galway
 logoleft_name: https&#58;//sport.universityofgalway.ie/assets/img/logo2.png
 
@@ -65,7 +63,7 @@ library(patchwork)
 
 ```
 
-# Background and Objectives
+# Aim and Objectives
 
 <!-- You can add references by inserting the following ^[reference details here] -->
 
@@ -294,13 +292,13 @@ head(drug_burden, 10)
  
 
 # Methods 
-ADR Profile Prediction Methods Using Drug–Gene Interaction Features:
+ADR Profile Prediction Methods Using Drug–Gene Interaction Chemical fingerprint Features:
 
-1.Naïve Frequency Model - Predicts ADRs based solely on their observed prevalence in the dataset, serving as a baseline.  
-2.Kernel Regression (KR) - Models the relationship between drug features and ADRs using a similarity-based kernel approach.  
-3.Linear SVM - Classifies ADR presence using a linear hyperplane in feature space.  
-4.RBF-Kernel SVM - Employs a non-linear radial basis function kernel to capture complex relationships between drug features and ADRs.  
-5.VKR (NMF + Kernel Ridge Regression) - Combines low-rank latent factor decomposition (NMF) with kernel ridge regression to predict ADRs in sparse and imbalanced datasets.
+**1.Naïve Frequency Model** : Predicts ADRs based solely on their observed prevalence in the dataset, serving as a baseline.  
+**2.Kernel Regression (KR)** : Models the relationship between drug features and ADRs using a similarity-based kernel approach.  
+**3.Linear SVM** : Classifies ADR presence using a linear hyperplane in feature space.  
+**4.RBF-Kernel SVM** : Employs a non-linear radial basis function kernel to capture complex relationships between drug features and ADRs.  
+**5.VKR (NMF + Kernel Ridge Regression)** : Combines low-rank latent factor decomposition (NMF) with kernel ridge regression to predict ADRs in sparse and imbalanced datasets.
 
 
 
@@ -338,7 +336,7 @@ div.footnotes {
 
 # Early Results
 
-Preliminary analysis on the figure.5 that the Naïve baseline and VKR achieve the highest AUROC (≈0.91), while KR and VKR achieve the best AUPR (≈0.41–0.42), clearly outperforming SVM variants on both metrics. VKR therefore provides the best overall trade‑off between discrimination (AUROC) and rare ADR detection (AUPR), motivating its use as the main reference method in further experiments.
+Preliminary analysis on the figure.4 shows that the Naïve baseline and VKR achieve the highest AUROC (≈0.91), while KR and VKR achieve the best AUPR (≈0.41–0.42), clearly outperforming SVM variants on both metrics. VKR therefore provides the best overall trade‑off between discrimination (AUROC) and rare ADR detection (AUPR), motivating its use as the main reference method in further experiments.
 
 ```{r images-row, echo=FALSE, results='asis', out.width='80%', fig.align='center', fig.cap='Early Performance of ADR Prediction Methods', fig.height=4} 
 cat('<div class="images-row">')
@@ -357,7 +355,7 @@ cat('</div>')
 -   New methods using weighted NMF, SVD and weighted SVD need to be explored. [3]
 
 # Acknowldgement
-We would like to thank Dr.Yezhao Zhong, Dr.Cathal Seoighe , Dr.Haixuan Yang for their work in ADR prediction and sharing the code and data through the github page.
+We would like to thank Dr. Yezhao Zhong, Dr. Cathal Seoighe , Dr. Haixuan Yang for their work in ADR prediction and sharing the code and data through the github page.
 
 # References
 [1] Zhong, Y., Seoighe, C., & Yang, H. (2024). Non-Negative matrix factorization combined with kernel regression for the prediction of adverse drug reaction profiles. Bioinformatics Advances, 4(1), vbae009.
