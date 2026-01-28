@@ -139,7 +139,7 @@ top_20_drugs <- drug_se %>%
   slice_head(n = 15)
 
 ggplot(top_20_drugs, aes(x = reorder(drugbank_name, n), y = n)) +
-  geom_col(fill = "#440154FF") + # Dark purple
+  geom_col(fill = "#440154FF") + # Dark purple  
   coord_flip() +
   labs(title = "Top 20 Drugs with Highest Side Effect Burden",
        subtitle = "Drugs associated with the greatest number of unique ADRs",
