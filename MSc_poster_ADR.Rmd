@@ -1,5 +1,5 @@
 ---
-title: Prediction of ADRs using NMF and Weighted NMFs
+title: Prediction of ADRs using NMF and Weighted NMF
 author:
   - name: Arshad Ahamed Shajahan
   - name: Sai Shasank Dandu
@@ -71,18 +71,16 @@ library(patchwork)
 
 Adverse drug reactions (ADRs) are a common problem in clinical and pharmacovigilance research and can lead to serious patient harm and biased conclusions if modelled poorly. Sparse, noisy, and highly imbalanced drug ADR data often cause standard machine learning methods to perform no better than naïve frequency‑based approaches, unless appropriate low‑rank and kernel‑based methods are used with clear assumptions [1].
 
-## Objectives
+Aim: To predict adverse drug reaction (ADR) profiles by integrating chemical fingerprints and drug–gene interaction using advanced statistical modeling approaches.
 
 1.  Explain the ADR profile prediction problem and its statistical challenges in imbalanced, noisy health data.
-2.  Explore low‑rank and kernel‑based methods (e.g. NMF+kernel regression and alternatives) for ADR prediction.
+2.  Explore various statistical methods for ADR prediction.
 
 # Datasets
 
-The primary source of datasets are DGIdb 4.0, SIDER 4.1 and PubChem database.
-
-1.  Drug-gene interaction pair: Intersection of drugs from DGIdb 4.0 and SIDER 4.1, generated to the binary matrix form.
-2.  Chemical fingerprints: Data from PubChem database, generated to the binary matrix form.
-3.  Drug & side effects: Drug along with it's side effects are extracted from SIDER 4.1 database.
+1.  **Drug-gene interaction pair**: Intersection of drugs from **DGIdb 4.0** and SIDER 4.1, generated to the binary matrix form. (Dim:778X2022)
+2.  **Chemical fingerprints**: Data from **PubChem** database, generated to the binary matrix form. (Dim:778X1024)
+3.  **Drug & side effects**: Drug along with it's side effects are extracted from SIDER 4.1 database. (1020 Drugs) 
 
 # Descriptive Statistics
 
@@ -94,7 +92,7 @@ drug_cf <- read.csv("Chemical_fingerprint.csv", row.names = 1)
 ```
 
 
-```{r, include=TRUE}
+```{r, include=FALSE}
 
 top_drugs <- drug_se %>% count(drugbank_name) %>% top_n(35, n) %>% pull(drugbank_name)
 top_effects <- drug_se %>% count(side_effect_name) %>% top_n(35, n) %>% pull(side_effect_name)
@@ -120,21 +118,27 @@ pheatmap(as.matrix(matrix_data),
 ```
 
 
-```{r}
-# Distribution of side effects and drugs
-drug_burden <- drug_se %>%
-  count(drugbank_name, sort = TRUE)
+```{r fig-adr-distribution, out.width='80%', fig.align='center', fig.cap=' Distribution of side effects per drug', fig.height=4}
+# Load libraries
+library(ggplot2)
+library(dplyr)
 
+# Ensure data exists
+if(!exists("drug_burden")){
+  drug_burden <- drug_se %>%
+    count(drugbank_name, sort = TRUE)
+}
+
+# Plot
 ggplot(drug_burden, aes(x = n)) +
   geom_histogram(binwidth = 5, fill = "orange", color = "white") +
-  labs(title = "Distribution of Side Effects for Drugs", 
-       x = "Number of Side Effects", y = "Number of Drugs") +
+  labs(x = "Number of Side Effects", y = "Number of Drugs") +
   theme_minimal()
 ```
 
 The above graph mentions the drugs majority of the drugs have more than 200 side effects, emphasising the importance of this study.
 
-```{r}
+```{r combined-plot, out.width='80%', fig.align='center', fig.cap='Top 15 drugs with most side effects and top 15 most frequent side effects', fig.height=6}
 
 # Top 15 drugs with most side effects
 top_drugs <- drug_se %>%
@@ -235,20 +239,20 @@ ggplot(drug_burden, aes(x = n)) +
 head(drug_burden, 10)
 ```
 
-[^2]: Murphy et al. 2005 doi: 10.1186/1468-6708-6-11
-
 <!-- This #### below causes the columns to break -->
 
 <!-- You can change where you put these breaks, and the "column_numbers: 4" argument in the YAMLS header to change the layout of the poster, with care! -->
  
 
 # Methods 
-1.We implemented five ADR profile prediction methods using DGI features only:
-Naïve frequency model (ADR prevalence per column), kernel regression (KR), linear SVM, RBF‑kernel SVM, and VKR (NMF + kernel ridge regression).
+ADR Profile Prediction Methods Using Drug–Gene Interaction Features:
 
+1.Naïve Frequency Model - Predicts ADRs based solely on their observed prevalence in the dataset, serving as a baseline.  
+2.Kernel Regression (KR) - Models the relationship between drug features and ADRs using a similarity-based kernel approach.  
+3.Linear SVM - Classifies ADR presence using a linear hyperplane in feature space.  
+4.RBF-Kernel SVM - Employs a non-linear radial basis function kernel to capture complex relationships between drug features and ADRs.  
+5.VKR (NMF + Kernel Ridge Regression) - Combines low-rank latent factor decomposition (NMF) with kernel ridge regression to predict ADRs in sparse and imbalanced datasets.
 
-```{r mytable, out.width='80%'}
-```
 
 
 ```{r standard-plot, out.width='80%', fig.align='center', fig.cap='Early Performance of ADR Prediction Methods', fig.height=4}
@@ -285,9 +289,9 @@ div.footnotes {
 
 # Early Results
 
-Preliminary analysis on the DGI dataset shows that the Naïve baseline and VKR achieve the highest AUROC (≈0.91), while KR and VKR achieve the best AUPR (≈0.41–0.42), clearly outperforming SVM variants on both metrics. VKR therefore provides the best overall trade‑off between discrimination (AUROC) and rare ADR detection (AUPR), motivating its use as the main reference method in further experiments.
+Preliminary analysis on the figure.5 that the Naïve baseline and VKR achieve the highest AUROC (≈0.91), while KR and VKR achieve the best AUPR (≈0.41–0.42), clearly outperforming SVM variants on both metrics. VKR therefore provides the best overall trade‑off between discrimination (AUROC) and rare ADR detection (AUPR), motivating its use as the main reference method in further experiments.
 
-```{r images-row, echo=FALSE, results='asis', fig.align='center', out.width='100%'}
+```{r images-row, echo=FALSE, results='asis', out.width='80%', fig.align='center', fig.cap='Early Performance of ADR Prediction Methods', fig.height=4} 
 cat('<div class="images-row">')
 knitr::include_graphics(
   c(
@@ -297,32 +301,20 @@ knitr::include_graphics(
 cat('</div>')
 
 ```
-####
 
 # Future Work
 
-We plan to conduct further analysis using:
-
--   Extended Data set with latest drug available from SIDER 4.1 & DGIdb database [^3]
--   New methods using weighted NMF, SVD and weighted SVD [^4].
-
-[^3]: https://doi.org/10.1093/nar/gkv1075
-
-[^4]: https://doi.org/10.3390/rs13020268
-
-We will use the `PYTHON` Programming for this.
-
-
-# GitHub
-
-The code and datasets for this project can be viewed at our GitHub repository here: <https://github.com/arshad4387/ADR-Prediction.git>
-
-
+-   Extended Data set with latest drug available from SIDER 4.1 & DGIdb database [2]
+-   New methods using weighted NMF, SVD and weighted SVD need to be explored. [3]
 
 # Acknowldgement
-We would like to thank Dr.Yezhao Zhong, Cathal Seoighe , Dr.Haixuan Yang for their work in ADR prediction and sharing the code and data through the github page.
- 
+We would like to thank Dr.Yezhao Zhong, Dr.Cathal Seoighe , Dr.Haixuan Yang for their work in ADR prediction and sharing the code and data through the github page.
 
 # References
 [1] Zhong, Y., Seoighe, C., & Yang, H. (2024). Non-Negative matrix factorization combined with kernel regression for the prediction of adverse drug reaction profiles. Bioinformatics Advances, 4(1), vbae009.
 
+[2] Michael Kuhn, Ivica Letunic, Lars Juhl Jensen, Peer Bork, The SIDER database of drugs and side effects, Nucleic Acids Research, Volume 44, Issue D1, 4 January 2016, Pages D1075–D1079, 
+
+[3] Lv X, Wang W, Liu H. Cluster-Wise Weighted NMF for Hyperspectral Images Unmixing with Imbalanced Data. Remote Sensing. 2021; 13(2):268.
+
+The code and datasets for this project can be viewed at our GitHub repository here: <https://github.com/arshad4387/ADR-Prediction.git>
