@@ -3,10 +3,7 @@ title: Prediction of ADRs using NMF and Weighted NMFs
 author:
   - name: Arshad Ahamed Shajahan
   - name: Sai Shasank Dandu
-<<<<<<< HEAD
     affil: 
-=======
->>>>>>> d63ef35872443e689156e15c694db1783f55380d
 affiliation:
   - num: 1
     address: School of Mathematical and Statistical Sciences, University of Galway
@@ -79,11 +76,7 @@ Adverse drug reactions (ADRs) are a common problem in clinical and pharmacovigil
 1.  Explain the ADR profile prediction problem and its statistical challenges in imbalanced, noisy health data.
 2.  Explore low‑rank and kernel‑based methods (e.g. NMF+kernel regression and alternatives) for ADR prediction.
 
-<<<<<<< HEAD
 # Datasets
-=======
-# Data Sources and Descriptive Statistics of Datasets
->>>>>>> d63ef35872443e689156e15c694db1783f55380d
 
 The primary source of datasets are DGIdb 4.0, SIDER 4.1 and PubChem database.
 
@@ -249,7 +242,7 @@ head(drug_burden, 10)
 <!-- You can change where you put these breaks, and the "column_numbers: 4" argument in the YAMLS header to change the layout of the poster, with care! -->
  
 
-# Methods and Early Results 
+# Methods 
 1.We implemented five ADR profile prediction methods using DGI features only:
 Naïve frequency model (ADR prevalence per column), kernel regression (KR), linear SVM, RBF‑kernel SVM, and VKR (NMF + kernel ridge regression).
 
@@ -259,17 +252,6 @@ Naïve frequency model (ADR prevalence per column), kernel regression (KR), line
 
 
 ```{r standard-plot, out.width='80%', fig.align='center', fig.cap='Early Performance of ADR Prediction Methods', fig.height=4}
-<<<<<<< HEAD
-=======
-library(ggplot2)
-
-ggplot(drug_burden, aes(x = n)) +
-  geom_histogram(binwidth = 5, fill = "steelblue", color = "white") +
-  labs(title = "Distribution of ADR Counts per Drug",
-       x = "Number of Adverse Drug Reactions",
-       y = "Number of Drugs") +
-  theme_minimal()
->>>>>>> d63ef35872443e689156e15c694db1783f55380d
 
 ```
 
@@ -301,6 +283,8 @@ div.footnotes {
 
 ```
 
+# Early Results
+
 Preliminary analysis on the DGI dataset shows that the Naïve baseline and VKR achieve the highest AUROC (≈0.91), while KR and VKR achieve the best AUPR (≈0.41–0.42), clearly outperforming SVM variants on both metrics. VKR therefore provides the best overall trade‑off between discrimination (AUROC) and rare ADR detection (AUPR), motivating its use as the main reference method in further experiments.
 
 ```{r images-row, echo=FALSE, results='asis', fig.align='center', out.width='100%'}
@@ -313,13 +297,9 @@ knitr::include_graphics(
 cat('</div>')
 
 ```
-<<<<<<< HEAD
 ####
-=======
 
->>>>>>> d63ef35872443e689156e15c694db1783f55380d
-
-# Next Project Steps
+# Future Work
 
 We plan to conduct further analysis using:
 
@@ -340,7 +320,8 @@ The code and datasets for this project can be viewed at our GitHub repository he
 
 
 # Acknowldgement
-We would like to thank Dr. Yezhao and Dr. Haixuan for their and sharing the code and data through the github page. 
+We would like to thank Dr.Yezhao Zhong, Cathal Seoighe , Dr.Haixuan Yang for their work in ADR prediction and sharing the code and data through the github page.
+ 
 
 # References
 [1] Zhong, Y., Seoighe, C., & Yang, H. (2024). Non-Negative matrix factorization combined with kernel regression for the prediction of adverse drug reaction profiles. Bioinformatics Advances, 4(1), vbae009.
