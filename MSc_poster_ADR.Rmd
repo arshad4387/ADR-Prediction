@@ -2,7 +2,7 @@
 title: Prediction of ADRs using NMF and Weighted NMF
 author:
   - name: Arshad Ahamed Shajahan
-  - name: Sai Shasank Dandu, Supervised by Dr. Davood Roshan
+  - name: Sai Shasank Dandu <br> Supervised by Dr. Davood Roshan
 affiliation:
     address: School of Mathematical and Statistical Sciences, University of Galway
 logoleft_name: https&#58;//sport.universityofgalway.ie/assets/img/logo2.png
@@ -15,8 +15,8 @@ primary_colour:	"#a80050"	# Secondary colour use for poster design.
 secondary_colour:	"#84003d"	# Main colour used for poster design.
 accent_colour:	"#e6007e"	# A third colour option.
 author_textcol: "white"
-title_textsize: "80pt"
-author_textsize: "55pt"
+title_textsize: "65pt"
+author_textsize: "45pt"
 body_textsize: "25pt"
 output: 
   posterdown::posterdown_html:
@@ -63,22 +63,25 @@ library(patchwork)
 
 ```
 
-# Aim and Objectives
+# Background
 
 <!-- You can add references by inserting the following ^[reference details here] -->
 
 Adverse drug reactions (ADRs) are a common problem in clinical and pharmacovigilance research and can lead to serious patient harm and biased conclusions if modelled poorly. Sparse, noisy, and highly imbalanced drug ADR data often cause standard machine learning methods to perform no better than naïve frequency‑based approaches, unless appropriate low‑rank and kernel‑based methods are used with clear assumptions [1].
 
-Aim: To predict adverse drug reaction (ADR) profiles by integrating chemical fingerprints and drug–gene interaction using advanced statistical modeling approaches.
+# Aim and Objectives  
 
-1.  Explain the ADR profile prediction problem and its statistical challenges in imbalanced, noisy health data.
+To predict adverse drug reaction (ADR) profiles by integrating chemical fingerprints and drug–gene interaction using advanced statistical modeling approaches.
+
+The primary objectives are to, <br>
+1.  Explain the ADR profile prediction problem and its statistical challenges in imbalanced, noisy health data.<br>
 2.  Explore various statistical methods for ADR prediction.
 
 # Datasets
 
-1.  **Drug-gene interaction pair**: Intersection of drugs from **DGIdb 4.0** and SIDER 4.1, generated to the binary matrix form. (Dim:778X2022)
-2.  **Chemical fingerprints**: Data from **PubChem** database, generated to the binary matrix form. (Dim:778X1024)
-3.  **Drug & side effects**: Drug along with it's side effects are extracted from SIDER 4.1 database. (1020 Drugs) 
+1.  **Drug-gene interaction pair**: Intersection of drugs from **DGIdb 4.0** and **SIDER 4.1**, generated to the binary matrix form with drugs on rows and genes on columns. (Dim:778X2022)
+2.  **Chemical fingerprints**: Data from **PubChem** database, generated to the binary matrix form with drugs on rows and chemical fingerprints on columns. (Dim:778X1024)
+3.  **Drug & side effects**: Drug along with it's side effects are extracted from **SIDER 4.1** database. (Dim:1020x5) 
 
 # Descriptive Statistics
 
@@ -89,34 +92,8 @@ drug_se <- read.csv("Drug_side_effects.csv")
 drug_cf <- read.csv("Chemical_fingerprint.csv", row.names = 1)
 ```
 
-
-```{r, include=FALSE}
-
-top_drugs <- drug_se %>% count(drugbank_name) %>% top_n(35, n) %>% pull(drugbank_name)
-top_effects <- drug_se %>% count(side_effect_name) %>% top_n(35, n) %>% pull(side_effect_name)
-
-matrix_data <- drug_se %>%
-  filter(drugbank_name %in% top_drugs, side_effect_name %in% top_effects) %>%
-  select(drugbank_name, side_effect_name) %>%
-  distinct() %>%
-  mutate(present = 1) %>%
-  pivot_wider(names_from = side_effect_name, 
-              values_from = present, 
-              values_fill = 0) %>%
-  column_to_rownames("drugbank_name")
-
-# Plot Heatmap with Dendrograms
-pheatmap(as.matrix(matrix_data), 
-         clustering_distance_rows = "binary", 
-         clustering_distance_cols = "binary",
-         main = "Clustering Drugs by Side Effect Profiles",
-         color = c("white", "firebrick"),
-         fontsize_row = 7, fontsize_col = 7,
-         legend_breaks = c(0, 1), legend_labels = c("No ADR", "ADR Present"))
-```
-
-
-```{r fig-adr-distribution, out.width='80%', fig.align='center', fig.cap=' Distribution of side effects per drug. This histogram illustrates a right-skewed distribution, where the majority of drugs have a relatively low number of side effects, typically clustered between 0 and 200. As the number of side effects increases, the frequency of drugs drops significantly, with few extreme outliers reaching over 800 side effects.', fig.height=4}
+**Figure 1** displays the distribution of side effects per drugs. This histogram illustrates a right-skewed distribution, where the majority of drugs have a relatively low number of side effects, typically clustered between 0 and 200. As the number of side effects increases, the frequency of drugs drops significantly, with few extreme outliers reaching over 800 side effects.
+```{r fig-adr-distribution, out.width='80%', fig.align='center', fig.cap=' Distribution of side effects per drug', fig.height=4}
 # Load libraries
 library(ggplot2)
 library(dplyr)
@@ -133,7 +110,7 @@ ggplot(drug_burden, aes(x = n)) +
   labs(x = "Number of Side Effects", y = "Number of Drugs") +
   theme_minimal()
 ```
-<br>
+**Figure 2** highlights a statistical concentration where a small group of medications exhibits over 800 unique adverse drug reactions (ADRs). Simultaneously, the data identifies pervasive clinical symptoms, such as nausea and headache, which are shared by nearly 900 different drugs.
 ```{r combined-plot, out.width='80%', fig.align='center', fig.cap='Drugs with most side effects and most frequent side effects', fig.height=6}
 
 # Top 15 drugs with most side effects
@@ -184,8 +161,8 @@ combined_plot <- plot_drugs + plot_side_effects +
   )
 combined_plot
 ```
-
-```{r Heatmap-plot, out.width='80%', fig.align='center', fig.cap='Drug and side effects similarity. The heatmap reveals high-density clusters (dark blue) where specific drug classes exhibiting similarity in their side-effect profiles', fig.height=6}
+**Figure 3** presents a heatmap illustrating statistically significant clustering where specific drug pairs share more than 80% of their side-effect profiles, indicating high pharmacological redundancy. 
+```{r Heatmap-plot, out.width='80%', fig.align='center', fig.cap='Drug and side effects similarity', fig.height=6}
 # Heatmap plot
 binary_df <- drug_se %>%
   select(drugbank_name, side_effect_name) %>%
@@ -299,13 +276,9 @@ ADR Profile Prediction Methods Using Drug–Gene Interaction Chemical fingerprin
 **3.Linear SVM** : Classifies ADR presence using a linear hyperplane in feature space.  
 **4.RBF-Kernel SVM** : Employs a non-linear radial basis function kernel to capture complex relationships between drug features and ADRs.  
 **5.VKR (NMF + Kernel Ridge Regression)** : Combines low-rank latent factor decomposition (NMF) with kernel ridge regression to predict ADRs in sparse and imbalanced datasets.
-
-
-
 ```{r standard-plot, out.width='80%', fig.align='center', fig.cap='Early Performance of ADR Prediction Methods', fig.height=4}
 
 ```
-
 ```{css, echo=FALSE}
 div.logo_left{
   width: 20%;
@@ -333,7 +306,6 @@ div.footnotes {
 
 
 ```
-
 # Early Results
 
 Preliminary analysis on the figure.4 shows that the Naïve baseline and VKR achieve the highest AUROC (≈0.91), while KR and VKR achieve the best AUPR (≈0.41–0.42), clearly outperforming SVM variants on both metrics. VKR therefore provides the best overall trade‑off between discrimination (AUROC) and rare ADR detection (AUPR), motivating its use as the main reference method in further experiments.
@@ -348,7 +320,7 @@ knitr::include_graphics(
 cat('</div>')
 
 ```
-####
+
 # Future Work
 
 -   Extended Data set with latest drug available from SIDER 4.1 & DGIdb database [2]
