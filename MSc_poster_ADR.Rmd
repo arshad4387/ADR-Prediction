@@ -10,7 +10,7 @@ logoleft_name: https&#58;//sport.universityofgalway.ie/assets/img/logo2.png
 poster_height: "594mm"
 poster_width: "841mm"
 column_numbers: 4
-column_margins: "0.5in"	
+column_margins: "0.35in"	
 primary_colour:	"#a80050"	# Secondary colour use for poster design.
 secondary_colour:	"#84003d"	# Main colour used for poster design.
 accent_colour:	"#e6007e"	# A third colour option.
@@ -39,9 +39,29 @@ div.poster_title{
 div.footnotes {
     font-size: 16pt;
 }
-```
+.section h1, 
+.section h2, 
+.section h3, 
+.section h4 {
+  margin-top: 0em !important;
+}
+.figure {
+  margin-bottom: 0.2em !important;
+}
+#methods {
+  margin-top: 0em !important;
+}
+.figure p.caption {
+  margin-top: 0.1em !important;
+  margin-bottom: 0.2em !important;
+  line-height: 1.1 !important;
+}
+.figure {
+  margin-bottom: 0.3em !important;
+}
 
-<!-- Don't change anything above, except the title and author names, unless you know what you are doing. -->
+
+```
 
 ```{r, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE,
@@ -64,8 +84,6 @@ library(patchwork)
 ```
 
 # Background
-
-<!-- You can add references by inserting the following ^[reference details here] -->
 
 Adverse drug reactions (ADRs) are a common problem in clinical and pharmacovigilance research and can lead to serious patient harm and biased conclusions if modelled poorly. Sparse, noisy, and highly imbalanced drug ADR data often cause standard machine learning methods to perform no better than naïve frequency‑based approaches, unless appropriate low‑rank and kernel‑based methods are used with clear assumptions [1].
 
@@ -263,19 +281,13 @@ ggplot(drug_burden, aes(x = n)) +
 head(drug_burden, 10)
 ```
 
-<!-- This #### below causes the columns to break -->
-
-<!-- You can change where you put these breaks, and the "column_numbers: 4" argument in the YAMLS header to change the layout of the poster, with care! -->
- 
-
 # Methods 
-ADR Profile Prediction Methods Using Drug–Gene Interaction Chemical fingerprint Features:
-
-**1.Naïve Frequency Model** : Predicts ADRs based solely on their observed prevalence in the dataset, serving as a baseline.  
-**2.Kernel Regression (KR)** : Models the relationship between drug features and ADRs using a similarity-based kernel approach.  
-**3.Linear SVM** : Classifies ADR presence using a linear hyperplane in feature space.  
-**4.RBF-Kernel SVM** : Employs a non-linear radial basis function kernel to capture complex relationships between drug features and ADRs.  
-**5.VKR (NMF + Kernel Ridge Regression)** : Combines low-rank latent factor decomposition (NMF) with kernel ridge regression to predict ADRs in sparse and imbalanced datasets.
+ADR Profile Prediction Methods Using Drug–Gene Interaction Chemical fingerprint Features:  
+**1. Naïve Frequency Model**: Predicts ADRs based solely on their observed prevalence in the dataset, serving as a baseline.  
+**2. Kernel Regression (KR)**: Models the relationship between drug features and ADRs using a similarity-based kernel approach.  
+**3. Linear SVM**: Classifies ADR presence using a linear hyperplane in feature space.  
+**4. RBF-Kernel SVM**: Employs a non-linear radial basis function kernel to capture complex relationships between drug features and ADRs.  
+**5. VKR (NMF + Kernel Ridge Regression)**: Combines low-rank latent factor decomposition (NMF) with kernel ridge regression to predict ADRs in sparse and imbalanced datasets.
 ```{r standard-plot, out.width='80%', fig.align='center', fig.cap='Early Performance of ADR Prediction Methods', fig.height=4}
 
 ```
@@ -298,7 +310,7 @@ div.footnotes {
 
 .images-row img {
   max-width: 100%;
-  margin: 0.3em;
+  margin: 0.1em;
   border: none;
   box-shadow: none;
 }
@@ -308,8 +320,7 @@ div.footnotes {
 ```
 # Early Results
 
-Preliminary analysis on the figure.4 shows that the Naïve baseline and VKR achieve the highest AUROC (≈0.91), while KR and VKR achieve the best AUPR (≈0.41–0.42), clearly outperforming SVM variants on both metrics. VKR therefore provides the best overall trade‑off between discrimination (AUROC) and rare ADR detection (AUPR), motivating its use as the main reference method in further experiments.
-
+Preliminary analysis on the **figure 4** shows that the **Naïve baseline and VKR achieve the highest AUROC (≈0.91)**, while **KR and VKR achieve the best AUPR (≈0.41–0.42)**, clearly outperforming SVM variants on both metrics. VKR therefore provides the best overall trade‑off between discrimination (AUROC) and rare ADR detection (AUPR), motivating its use as the main reference method in further experiments.
 ```{r images-row, echo=FALSE, results='asis', out.width='80%', fig.align='center', fig.cap='Early Performance of ADR Prediction Methods', fig.height=4} 
 cat('<div class="images-row">')
 knitr::include_graphics(
@@ -320,20 +331,16 @@ knitr::include_graphics(
 cat('</div>')
 
 ```
-
 # Future Work
 
 -   Extended Data set with latest drug available from SIDER 4.1 & DGIdb database [2]
--   New methods using weighted NMF, SVD and weighted SVD need to be explored. [3]
+-   New methods using weighted NMF, SVD and weighted SVD need to be explored. [3]. 
 
 # Acknowldgement
-We would like to thank Dr. Yezhao Zhong, Dr. Cathal Seoighe , Dr. Haixuan Yang for their work in ADR prediction and sharing the code and data through the github page.
+We would like to thank Dr. Yezhao Zhong, Dr. Cathal Seoighe , Dr. Haixuan Yang for their work in ADR prediction and sharing the code and data through the github page.  
 
 # References
-[1] Zhong, Y., Seoighe, C., & Yang, H. (2024). Non-Negative matrix factorization combined with kernel regression for the prediction of adverse drug reaction profiles. Bioinformatics Advances, 4(1), vbae009.
-
-[2] Michael Kuhn, Ivica Letunic, Lars Juhl Jensen, Peer Bork, The SIDER database of drugs and side effects, Nucleic Acids Research, Volume 44, Issue D1, 4 January 2016, Pages D1075–D1079, 
-
-[3] Lv X, Wang W, Liu H. Cluster-Wise Weighted NMF for Hyperspectral Images Unmixing with Imbalanced Data. Remote Sensing. 2021; 13(2):268.
-
+[1] Yezhao Zhong, Cathal Seoighe, Haixuan Yang, Non-Negative matrix factorization combined with kernel regression for the prediction of adverse drug reaction profiles, Bioinformatics Advances, Volume 4, Issue 1, 2024, vbae009   
+[2] Kuhn M, Letunic I, Jensen LJ, Bork P. The SIDER database of drugs and side effects. Nucleic Acids Res. 2016 Jan 4;44(D1):D1075-9.  
+[3] Y. -D. Kim and S. Choi, "Weighted nonnegative matrix factorization," 2009 IEEE International Conference on Acoustics, Speech and Signal Processing, Taipei, Taiwan, 2009, pp. 1541-1544,  
 The code and datasets for this project can be viewed at our GitHub repository here: <https://github.com/arshad4387/ADR-Prediction.git>
