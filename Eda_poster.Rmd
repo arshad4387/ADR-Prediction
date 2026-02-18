@@ -93,6 +93,131 @@ drug_se <- read.csv("Drug_side_effects.csv")
 drug_cf <- read.csv("Chemical_fingerprint.csv", row.names = 1)
 ```
 
+Proper heatmap
+```{r}
+drug_se <- read.csv("Drug_side_effects.csv")
+binary_df <- drug_se %>%
+  select(drugbank_name, side_effect_name) %>%
+  distinct() %>%
+  mutate(present = 1) %>%
+  pivot_wider(names_from = side_effect_name, values_from = present, values_fill = 0)
+
+# Convert to Matrix
+mat <- as.matrix(binary_df[,-1])
+rownames(mat) <- binary_df$drugbank_name
+
+# --- Step 2: High-Performance Matrix Math ---
+# Calculate Intersection and Union for all 1020 drugs
+intersection_matrix <- mat %*% t(mat)
+side_effect_counts <- diag(intersection_matrix)
+sum_matrix <- outer(side_effect_counts, side_effect_counts, "+")
+union_matrix <- sum_matrix - intersection_matrix
+
+# Calculate % Similarity (Jaccard Index)
+similarity_matrix <- (intersection_matrix / union_matrix) * 100
+similarity_matrix[is.na(similarity_matrix)] <- 0
+
+threshold <- 85
+keep_drugs <- rownames(similarity_matrix)[apply(similarity_matrix, 1, function(x) any(x >= threshold & x < 100))]
+
+# Subset the matrix to only these drugs
+focused_matrix <- similarity_matrix[keep_drugs, keep_drugs]
+
+colors <- colorRampPalette(c("#ffffff", "#deebf7", "#9ecae1", "#3182bd", "#08519c"))(100)
+breaks_list <- seq(0, 100, length.out = 101)
+
+pheatmap(focused_matrix,
+         # --- CLUSTERING ENABLED ---
+         cluster_rows = TRUE,         # Orders drugs by similarity profile
+         cluster_cols = TRUE,         # Matches column order to row order
+         treeheight_row = 30,         # Shows a small dendrogram for grouping
+         treeheight_col = 30,
+         # --------------------------
+         
+         show_rownames = TRUE,      
+         show_colnames = TRUE,      
+         fontsize_row = 6,          
+         fontsize_col = 6,          
+         cellwidth = 7,             
+         cellheight = 7,
+         angle_col = 45,            
+         
+         color = colors,
+         breaks = breaks_list,      
+         main = paste("Clustered Drug Similarity (Threshold >=", threshold, "%)"),
+         border_color = NA,         
+         legend_breaks = c(0, 25, 50, 75, 100),
+         legend_labels = c("0%", "25%", "50%", "75%", "100% Shared"))
+
+
+
+
+
+
+# 3. Create the Heatmap
+# We define 100 color breaks from 0 to 100 to fix the scale
+# colors <- colorRampPalette(c("#ffffff", "#deebf7", "#9ecae1", "#3182bd", "#08519c"))(100)
+# breaks_list <- seq(0, 100, length.out = 101)
+
+# pheatmap(focused_matrix,
+#          cluster_rows = FALSE,      # No dendrograms
+#          cluster_cols = FALSE,
+#          show_rownames = TRUE,      # Enable Row Names
+#          show_colnames = TRUE,      # Enable Column Names
+#          fontsize_row = 6,          # Very small font to fit many names
+#          fontsize_col = 6,          # Very small font to fit many names
+#          cellwidth = 7,             # Fixed width for each cell (adjust as needed)
+#          cellheight = 7,
+#          angle_col = 45,            # Tilts the top labels for better spacing
+#          color = colors,
+#          breaks = breaks_list,      # Forces scale to be exactly 0 to 100
+#          main = paste("Drug and side effects similarity (Similarity >=", threshold, "%)"),
+#          border_color = NA,         # Remove borders for a smooth pixel look
+#          legend_breaks = c(0, 25, 50, 75, 100),
+#          legend_labels = c("0%", "25%", "50%", "75%", "100% Shared"))
+
+```
+
+```{r}
+# 1. Convert the matrix to a 'table' then to a 'data frame'
+# This creates three columns: Drug 1, Drug 2, and the Similarity Percentage
+similarity_table <- as.data.frame(as.table(similarity_matrix))
+
+# 2. Rename the columns for clarity
+colnames(similarity_table) <- c("Drug_1", "Drug_2", "Similarity_Pct")
+
+# 3. Clean the table:
+# - Remove self-comparisons (e.g., Pregabalin vs Pregabalin)
+# - Remove duplicates (If we have Drug A vs Drug B, we don't need Drug B vs Drug A)
+similarity_table_clean <- similarity_table %>%
+  filter(as.character(Drug_1) < as.character(Drug_2)) %>% 
+  filter(Similarity_Pct > 0) %>%
+  arrange(desc(Similarity_Pct))
+
+# View the top results
+# head(similarity_table_clean, 20)
+similarity_table_clean
+
+# Define your threshold (e.g., find drugs that share more than 70% of side effects)
+threshold <- 80
+
+high_similarity_pairs <- similarity_table_clean %>%
+  filter(Similarity_Pct >= threshold)
+
+high_similarity_pairs
+
+
+
+```
+
+
+
+
+
+
+
+
+
 ```{r}
 library(tidyverse)
 library(reshape2)
@@ -315,6 +440,8 @@ high_similarity_pairs <- similarity_table_clean %>%
 high_similarity_pairs
 
 ```
+
+
 ```{r}
 threshold <- 85
 keep_drugs <- rownames(similarity_matrix)[apply(similarity_matrix, 1, function(x) any(x >= threshold & x < 100))]
