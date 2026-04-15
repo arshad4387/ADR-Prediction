@@ -1,3 +1,8 @@
+This project predicts Adverse Drug Reactions (ADRs) using Non-negative Matrix Factorization (NMF), Weighted NMF, and Kernel-based machine learning models. The approach integrates:
+Drug–Gene Interaction features
+Chemical fingerprints
+ADR labels
+The goal is to predict missing ADRs for drugs using low-rank latent factor models combined with kernel regression.
 
 Dataset Summary
 Drug–Gene Interaction Matrix
