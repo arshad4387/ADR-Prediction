@@ -21,7 +21,7 @@ All datasets were converted to binary matrix format before use.
 
 | Dataset | Shape | Source | Notes |
 |---|---|---|---|
-| Drug–Gene Interaction | 973 x 3647 | STITCH / DGIdb | Binary interaction matrix |
+| Drug–Gene Interaction | 973 x 3647 | DGIdb | Binary interaction matrix |
 | Chemical Fingerprints | 973 x 1024 | PubChem (via PubChemPy + RDKit) | Morgan fingerprints, binary |
 | ADR Matrix | 5765 x 973 | SIDER | Sparsity: 0.977 |
 
