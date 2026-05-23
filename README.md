@@ -7,24 +7,11 @@
 
 ## Overview
 
-Adverse drug reactions are one of the leading causes of patient harm worldwide, yet detecting them early — before a drug reaches widespread use — remains a genuinely difficult problem. The challenge is not just biological; it is mathematical. The datasets involved are highly sparse, the positive-to-negative class ratio is severely imbalanced, and the feature spaces involved (genomic targets, chemical structure) are large relative to the number of known drugs.
+Adverse drug reactions are one of the leading causes of patient harm worldwide, yet detecting them early before a drug reaches widespread use remains a genuinely difficult problem. The challenge is not just biological, it is mathematical. The datasets involved are highly sparse and severely imbalanced (positive to negative ratio) and the feature spaces involved (genomic targets, chemical structure) are large relative to the number of known drugs.
 
-This project approaches ADR prediction as a matrix completion problem. Given a partially observed drug-side-effect matrix, the goal is to predict which side effects an unseen drug is likely to cause, using two sources of prior information: the drug's interactions with human genes, and its chemical fingerprint. We implemented and compared several models — from a simple frequency-based baseline up to weighted Non-negative Matrix Factorization with kernel regression — and assessed each using five-fold cross-validation across 973 drugs.
+Our ultimate aim is to address the mathematical challenges when creating prediction models for adverse drug reaction.​ We have used drug gene interaction and chemical fingerprints data for our prediction. We have then evaluated simple naive (frequency) baseline model to weighted non-negative matrix factorization with kernel regression.
 
-The project also extends an earlier published dataset by roughly 25%, adds methods not covered in the original research, and delivers a working web application for single-drug ADR prediction.
-
----
-
-## Motivation
-
-When a new drug enters clinical trials, its side-effect profile is largely unknown. Experimental approaches for discovering ADRs are slow and expensive. Computational prediction using publicly available genomic and chemical data offers a cheaper, faster first pass — flagging likely adverse effects before they are observed in patients.
-
-Two practical obstacles make this harder than a standard classification task:
-
-- **Sparse data.** The drug-side-effect matrix has a sparsity of around 0.977. Most entries are unknown, not negative.
-- **Class imbalance.** Among the entries that are known, positive cases (confirmed ADRs) are heavily outnumbered.
-
-The models chosen here were specifically selected or adapted to handle both issues.
+The project also extends an earlier published dataset by roughly 25%, adds methods not covered in the original research, and delivers a working web application for single drug ADR prediction.
 
 ---
 
@@ -50,21 +37,21 @@ The dataset was extended by approximately 25% compared to the original research 
 
 ### Naive Baseline
 
-A frequency-only model that ignores chemical and genomic features entirely. It predicts a side effect for every drug based purely on how often that side effect appears in the training set. This serves as a sanity check — any meaningful model should outperform it on precision-recall metrics.
+A frequency only model that ignores chemical and genomic features entirely. It predicts a side effect for every drug based purely on how often that side effect appears in the training set. This serves as a sanity check, any meaningful model should outperform it on precision recall metrics.
 
 ### Kernel Regression
 
-A similarity-based approach. For each test drug, a similarity score (between 0 and 1) is computed against every training drug using either a Gaussian (RBF) or linear kernel applied to the drug-gene or chemical fingerprint features. The predicted side-effect profile is then a weighted combination of the training drugs' known profiles.
+A similarity based approach. For each test drug, a similarity score (between 0 and 1) is computed against every training drug using either a Gaussian (RBF) or linear kernel applied to the drug-gene or chemical fingerprint features. The predicted side effect profile is then a weighted combination of the training drugs known profiles.
 
 ### Support Vector Machine (Linear and RBF)
 
-Rather than predicting per drug, SVM operates per side effect — for each ADR, it trains a binary classifier to distinguish drugs that cause it from those that do not. Two kernel variants were tested: linear and RBF, where the RBF kernel projects the data into a higher-dimensional space before fitting the decision boundary.
+Rather than predicting per drug, SVM operates per side effect — for each ADR, it trains a binary classifier to distinguish drugs that cause it from those that do not. Two kernel variants were tested: linear and RBF, where the RBF kernel projects the data into a higher dimensional space before fitting the decision boundary.
 
 ### Weighted NMF with Kernel Regression (VKR Weighted NMF)
 
-Non-negative Matrix Factorization decomposes the drug-side-effect matrix into two lower-rank matrices: a side-effect profile matrix and a weight matrix. The number of latent features controls the compression. To handle class imbalance, a 1:10 weighting scheme penalises missed positive cases more heavily than false positives. The factorisation runs for 500 iterations. At prediction time, kernel regression maps a new drug's feature vector into the learned latent space, and the side-effect profile is reconstructed from there.
+Non-negative Matrix Factorization decomposes the drug side effect matrix into two lower rank matrices: a side effect profile matrix and a weight matrix. The number of latent features controls the compression. To handle class imbalance, a 1:10 weighting scheme penalises missed positive cases more heavily than false positives. The factorisation runs for 500 iterations. At prediction time, kernel regression maps a new drug's feature vector into the learned latent space, and the side effect profile is reconstructed from there.
 
-This model trades AUROC for precision-recall performance, which is the more meaningful metric given the extreme class imbalance.
+This model trades AUROC for precision recall performance, which is the more meaningful metric given the extreme class imbalance.
 
 ### VKR NMF and VKR SVD
 
@@ -74,7 +61,7 @@ Variants of the above using standard (unweighted) NMF and singular value decompo
 
 ## Results
 
-Five-fold cross-validation across all 973 drugs. AUROC measures overall discrimination; AUPR is more informative here given the sparsity and imbalance.
+Five fold cross validation across all 973 drugs. AUROC measures overall discrimination; AUPR is more informative here given the sparsity and imbalance.
 
 | Model | AUROC Mean (SD) | AUPR Mean (SD) |
 |---|---|---|
@@ -126,7 +113,3 @@ The current system has a few known constraints worth being upfront about:
 - Only single-drug ADR prediction is supported. Drug-drug interaction effects are out of scope.
 
 Planned extensions include integration with live pharmacological databases and multi-drug interaction modelling.
-
----
-
-## Repository Structure
