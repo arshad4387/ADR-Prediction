@@ -176,16 +176,16 @@ assessment of the model performance. So, both AUPR and AUROC has been
 evaluated for all the models.
 
 The previous research work from (Zhong et al. 2024) serves as a base for
-our research. It addressed the core issue with imbalanced datasets but
-introducing a novel method of using Non-Negative Matrix Factorization.
-In this research, the results from the previous paper is replicated and
-further extended the work by expanding the dataset and by introducing a
+our research. It addressed the core issue with imbalanced datasets by
+introducing a novel method called Non-Negative Matrix Factorization. In
+this research, the results from the previous paper is replicated and
+further extended the work by expanding the dataset and introduced a
 novel method, Weighted Non-Negative Matrix Factorization for predicting
 ADRs using drug gene interaction (DGI) profiles and chemical
 fingerprints.
 
 In the remainder of this paper, Section 2 describes the datasets,
-Section 3 \ldots{} and so on.
+Section 3 methods, followed by results and discussions.
 
 \section{Data}\label{data}
 
@@ -245,17 +245,21 @@ positive class
 
 \section{Methods}\label{methods}
 
-Initially exploratory data analysis, including descriptive statistics
-and heatmaps, was performed to ??????. Furthermore, to predict the ADR,
-six modelling approaches of increasing sophistication were employed. All
-models take as input either the DGI matrix, the chemical fingerprints
-matrix, or both, and output a probability score for each drug side
+Exploratory data analysis, comprising descriptive statistics and heatmap
+visualisation, was initially conducted to characterise the most
+prevalent side effects and to examine drug similarity structures and
+class imbalance within the ADR dataset. Subsequently, six modelling
+approaches of increasing methodological complexity were employed to
+predict ADR associations. Each model utilises the drug--gene interaction
+(DGI) matrix, the chemical fingerprint matrix, or a combination of both
+as input, and outputs a predicted probability score for each drug--side
 effect pair. 5-fold cross validation was performed to assess the
 predictive ability of the proposed models. Due to high sparsity of the
 drug side effect matrix (with a positive rate well below 10\% for most
 side effects), AUPR was used as a primary evaluation metric alongside
-AUROC, since AUROC can appear inflated in imbalanced settings. Below we
-briefly discuss the proposed modelling approaches.
+AUROC, since AUROC can appear inflated in imbalanced settings.
+
+Below we briefly discuss the proposed modelling approaches.
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
@@ -323,20 +327,21 @@ Regression is then applied as in the standard NMF case to project new
 drugs. This model is designed specifically to address the imbalance
 problem, prioritising precision on positive predictions. The penalty
 factor of 1:10 is applied, for predicting all true outcomes wrongly.
-Since the dataset is imbalanced, this penalty adds weightage to predict
-all the true positives correctly.
+Since the dataset is imbalanced, this penalty enforces the model to
+predict the true positives correctly. This is the novel model that is
+introduced to increase
 
 \section{Results}\label{results}
 
-Performing Exploratory Data Analysis (EDA) in the dataset, brought out
-some key findings and understaandings about the ADR dataset. In Figure
-\ref{fig:fig-most-common-drug} you can see the drugs associated with the
-largest number of reported side effects. The results show that a
-relatively small number of ADRs account for a substantial proportion of
-all reported events, indicating a highly skewed distribution of side
-effects. The drugs mentioned below interacts with our central nervous
-system (CNS) and hence the large number of side effects associated with
-them.
+Exploratory data analysis (EDA) was performed on the dataset to
+characterise key structural properties of the ADR data. Figure 1
+presents the drugs associated with the largest number of reported side
+effects. The results indicate that a relatively small number of ADRs
+account for a substantial proportion of all reported events, reflecting
+a highly skewed distribution of side effects. The drugs exhibiting the
+highest side-effect counts predominantly act on the central nervous
+system (CNS), which likely accounts for their disproportionately large
+number of associated adverse reactions.
 
 \begin{figure}[H]
 
@@ -347,10 +352,11 @@ them.
 \caption{Drugs with most number of side effects and most frequent side effects\label{fig:fig-most-common-drug}}\label{fig:fig-most-common-drug}
 \end{figure}
 
-The below Figure \ref{fig:fig-se-distribution} describes the number of
-drugs associated with number of side effects. Several drugs are
-associated with more than 200 side effects and handful of them were
-associated with as high as 800 side effects.
+Figure 2 illustrates the distribution of the number of side effects
+associated with each drug. Several drugs are associated with more than
+200 side effects, while a small subset is associated with as many as
+800, further underscoring the heterogeneity of side-effect burden across
+drugs.
 
 \begin{figure}[H]
 
@@ -361,15 +367,16 @@ associated with as high as 800 side effects.
 \caption{Distribution of side effects}\label{fig:fig-se-distribution}
 \end{figure}
 
-Since most of model functions based on similarity between the drug
-profiles, the Figure 3 heatmap illustrates the drug similarity based on
-side effects. Distinct clustering patterns can be observed, suggesting
-that groups of drugs share similar adverse reaction profiles. The
-heatmaps also demonstrate the sparsity of the interaction matrix, with
-positive drug-side effect associations representing only a small
-fraction of all possible combinations. Overall, the visualisation
-highlights the heterogeneous nature of ADR profiles and the highly
-imbalanced characteristics of the prediction task.
+Given that the majority of the proposed models rely on similarity
+between drug profiles, Figure 3 presents a heatmap illustrating drug
+similarity based on shared side-effect profiles. Distinct clustering
+patterns are observed, suggesting that subsets of drugs share similar
+adverse reaction profiles. The heatmap further demonstrates the sparsity
+of the underlying interaction matrix, with positive drug--side effect
+associations representing only a small fraction of all possible
+combinations. Collectively, these visualisations highlight the
+heterogeneous nature of ADR profiles and the pronounced class imbalance
+characteristic of the prediction task.
 
 \begin{figure}[H]
 
@@ -657,7 +664,8 @@ Figure 7 and 8, displays a snapshot of an interactive web application
 allowing users to input a drug and receive a ranked list of predicted
 adverse drug reactions from the best-performing model. The app can be
 run locally where the code, datasets, and deployment steps are all
-available in the paper's GitHub repository.
+available in the paper's
+\href{https://github.com/arshad4387/ADR-Prediction}{GitHub repository}
 
 \section{Discussion}\label{discussion}
 
