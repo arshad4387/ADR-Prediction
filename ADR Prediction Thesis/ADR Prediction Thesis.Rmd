@@ -1,0 +1,161 @@
+---
+title: Prediction of Adverse Drug Reactions - Using Advanced Statistical Methods
+authors:
+  - name: Arshad Ahamed Shajahan
+    department: School of Mathematics
+    affiliation: University of Galway
+    location: Galway, Ireland
+    email: A.Shajahan2@universityofgalway.ie
+  - name: Sai Shasank Dandu
+    department: School of Mathematics
+    affiliation: University of Galway
+    location: Galway, Ireland
+    email: S.Dandu2@universityofgalway.ie
+abstract: |
+  How unfortunate is that when you intake drug to cure a specific issue but end up having other adverse side effects? Adverse Drug Reactions (ADRs) represent a major challenge in pharmacovigilance and drug safety, contributing significantly to patient morbidity, mortality, and healthcare costs. So in this paper, we have evaluated and developed statistical methods and models in predicting ADRs using two complementary sources of drug information, drug gene interaction profiles and chemical fingerprints. The major challenge in working with ADR dataset is that, there is a huge imbalance in the available dataset, so the predictive model should understand the imbalance and try to figure out the pattern.The models evaluated include a Naïve Baseline, Kernel Regression (KR), Support Vector Machines (SVM) with linear and RBF kernels, and a novel Weighted Non-negative Matrix Factorisation (NMF) framework combined with Kernel Regression. Performance is assessed across 5-fold cross-validation using the Area Under the ROC Curve (AUROC) and Area Under the Precision-Recall Curve (AUPR). Our results demonstrate that the Weighted NMF with Kernel Regression achieves the highest AUPR (0.5007 ± 0.0021), making it the most effective method for handling the imbalanced nature of ADR datasets, while VKR NMF achieves the highest AUROC (0.9183 ± 0.0025). We further develop an interactive web application enabling real time single drug ADR prediction.
+
+bibliography: references.bib
+biblio-style: unsrt
+output: rticles::arxiv_article
+---
+
+# Introduction
+
+Adverse Drug Reactions (ADRs) are unintended, harmful responses to medications administered at normal therapeutic doses. According to the WHO, ADRs are among the leading causes of hospitalisation and death worldwide, accounting for approximately 5–7% of all hospital admissions in developed countries. Beyond the human cost, ADRs impose enormous financial burdens on healthcare systems, with estimates suggesting costs in the hundreds of billions of dollars annually.
+
+Traditional approaches to ADR detection rely primarily on post market pharmacovigilance, monitoring drug safety signals after a drug has already entered clinical use. While these methods are effective, yet someone has to experience an adverse reaction to flag the behavior. Hence, computational prediction of ADRs, offers the potential to anticipate safety issues before clinical exposure, informing drug development decisions and personalising treatment.
+
+Drugs can be characterised by their interaction profiles with genes and by their chemical structure, both of which are expected to carry information about their biological activity and, by extension, their side effect profiles. However, the construction of such models faces two fundamental statistical challenges:
+
+1. **Sparsity**: The drug side effect matrix is extremely sparse. Most drug side effect pairs are unobserved, not because the side effect is absent, but because it has not been reported or studied.
+
+2. **Class Imbalance**: The number of known positive drug side effect associations is vastly smaller than the number of negatives, making standard classifiers biased toward predicting the majority (negative) class.
+
+Addressing these challenges requires careful model selection and evaluation. Standard accuracy metrics such as AUROC can be misleading in highly imbalanced settings. Hence, AUPR is often a more informative metric when positives are rare.
+
+In this paper, we present a comprehensive study of ADR prediction using drug gene interaction (DGI) profiles and chemical fingerprints. We evaluated a range of models from a simple Naïve Baseline to Kernel Regression, Support Vector Machines, and a novel Weighted Non-negative Matrix Factorisation (NMF) framework.
+
+# Data
+
+## Dataset
+
+The primary data sources were integrated from DGI database,
+
+- **Drug Gene Interaction (DGI) data**: We retrieved drug gene interaction (DGI) pairs from DGI 4.0 database. We mapped the drug names from SIDER 4.1 to DGIdb 4.0 and found 973 drugs in common.
+
+- **Chemical Fingerprints**: We retrieved the drug chemical structure fingerprints (Chem) by mapping the CIDs of 1430 drugs from SIDER 4.1 to PubChem. PubChem fingerprints are binary vectors that can represent the chemical structures of drugs. We used the ChemmineR and ChemmineOB packages in Python to generate the fingerprints.
+
+- **Side Effect data**: We used the SIDER 4.1 database. SIDER 4.1 is an ADR dataset containing drug ADR data, which provides labels for our ADR predictions. We searched features from DGIdb and PubChem for these drugs and found 973 common drugs.
+
+## Preprocessing
+
+All three datasets were binarised (binary matrices) prior to modelling. The DGI and Chemical fingerprints data had all the drugs in the first column. Genes and generated fingerprints were presented in each columns in the respective datasets.
+
+The final dataset comprised:
+
+- **973 drugs** in total
+- **3,647 unique genes** in the drug-gene interaction matrix
+- **1,024 chemical fingerprint features** per drug
+
+Table 1 summarises the dataset dimensions.
+
+| Feature Type          | Dimensionality |
+|-----------------------|---------------|
+| Drug-Gene Interaction | 973 × 3,647   |
+| Chemical Fingerprints | 973 × 1,024   |
+| Side Effect Matrix    | 973 × 5779    |
+
+Table: Summary of dataset dimensions.
+
+## Class Imbalance in the dataset
+
+The drug side effect matrix is highly sparse, with a positive rate well below 10% for most side effects. This severe class imbalance motivates the use of AUPR as a primary evaluation metric alongside AUROC, since AUROC can appear inflated in imbalanced settings. In the entire dataset, about 97% of the data represents the negative class and remaining as positive class
+
+
+
+# Examples of citations, figures, tables, references
+\label{sec:others}
+
+You can insert references. Here is some text [@kour2014real; @kour2014fast] and see @hadash2018estimate.
+
+The documentation for \verb+natbib+ may be found at
+
+You can use custom blocks with LaTeX support from **rmarkdown** to create environment.
+
+::: {.center latex=true}
+  <http://mirrors.ctan.org/macros/latex/contrib/natbib/natnotes.pdf}>
+:::
+
+Of note is the command \verb+\citet+, which produces citations
+appropriate for use in inline text.  
+
+You can insert LaTeX environment directly too.
+
+\begin{verbatim}
+   \citet{hasselmo} investigated\dots
+\end{verbatim}
+
+produces
+
+\begin{quote}
+  Hasselmo, et al.\ (1995) investigated\dots
+\end{quote}
+
+\begin{center}
+  \url{https://www.ctan.org/pkg/booktabs}
+\end{center}
+
+
+## Figures
+
+You can insert figure using LaTeX directly. 
+
+See Figure \ref{fig:fig1}. Here is how you add footnotes. [^Sample of the first footnote.]
+
+\begin{figure}
+  \centering
+  \fbox{\rule[-.5cm]{4cm}{4cm} \rule[-.5cm]{4cm}{0cm}}
+  \caption{Sample figure caption.}
+  \label{fig:fig1}
+\end{figure}
+
+But you can also do that using R.
+
+You can use **bookdown** to allow references for Tables and Figures.
+
+
+## Tables
+
+Below we can see how to use tables. 
+
+See awesome Table~\ref{tab:table} which is written directly in LaTeX in source Rmd file.
+
+\begin{table}
+ \caption{Sample table title}
+  \centering
+  \begin{tabular}{lll}
+    \toprule
+    \multicolumn{2}{c}{Part}                   \\
+    \cmidrule(r){1-2}
+    Name     & Description     & Size ($\mu$m) \\
+    \midrule
+    Dendrite & Input terminal  & $\sim$100     \\
+    Axon     & Output terminal & $\sim$10      \\
+    Soma     & Cell body       & up to $10^6$  \\
+    \bottomrule
+  \end{tabular}
+  \label{tab:table}
+\end{table}
+
+You can also use R code for that.
+
+```{r}
+knitr::kable(head(mtcars), caption = "Head of mtcars table")
+```
+
+
+## Lists
+
+- Item 1
+- Item 2 
+- Item 3
