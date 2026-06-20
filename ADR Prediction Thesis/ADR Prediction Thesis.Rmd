@@ -169,7 +169,7 @@ results_summary <- data.frame(
 kable(results_summary, caption = "Mean performance across five-fold cross-validation (AUROC and AUPR)")
 ```
 
-Table 2. Summary of predictive performance for all evaluated methods using five-fold cross-validation with a 75% training and 25% testing split, reporting the mean AUROC and AUPR (± standard deviation) across the five folds. The evaluated methods achieved mean AUROC values ranging from 0.7955 ± 0.0097 to 0.9183 ± 0.0027, while mean AUPR values ranged from 0.3122 ± 0.0124 to 0.5001 ± 0.0022.
+Table 1. Summary of predictive performance for all evaluated methods using five-fold cross-validation with a 75% training and 25% testing split, reporting the mean AUROC and AUPR (± standard deviation) across the five folds. The evaluated methods achieved mean AUROC values ranging from 0.7955 ± 0.0097 to 0.9183 ± 0.0027, while mean AUPR values ranged from 0.3122 ± 0.0124 to 0.5001 ± 0.0022.
 
 Among all evaluated approaches, VKR NMF achieved the highest mean AUROC (0.9183 ± 0.0027) together with a mean AUPR of 0.4230 ± 0.0033, indicating the strongest overall discrimination between positive and negative ADR associations. 
 
@@ -204,9 +204,9 @@ Sensitivity and specificity heatmaps across all methods and decision thresholds 
 ```{r, echo=FALSE}
 library(knitr)
 
-results <- data.frame(
+auroc_table <- data.frame(
   Method = c(
-    "Naive Baseline",
+    "Naïve Baseline",
     "Kernel Regression",
     "SVM Linear",
     "SVM RBF",
@@ -215,12 +215,7 @@ results <- data.frame(
     "VKR SVD"
   ),
 
-  AUROC_F1 = c(0.9089, 0.8676, 0.7828, 0.8969, 0.9158, 0.8510, 0.9051),
-  AUROC_F2 = c(0.9078, 0.8727, 0.8003, 0.8974, 0.9163, 0.8533, 0.9072),
-  AUROC_F3 = c(0.9083, 0.8718, 0.8000, 0.9018, 0.9165, 0.8600, 0.9106),
-  AUROC_F4 = c(0.9116, 0.8787, 0.7857, 0.8970, 0.9204, 0.8587, 0.9118),
-  AUROC_F5 = c(0.9142, 0.8819, 0.8087, 0.9074, 0.9226, 0.8527, 0.9143),
-  AUROC_Mean_SD = c(
+  Mean_AUROC_SD = c(
     "0.9101 ± 0.0024",
     "0.8745 ± 0.0051",
     "0.7955 ± 0.0097",
@@ -228,14 +223,27 @@ results <- data.frame(
     "0.9183 ± 0.0027",
     "0.8551 ± 0.0035",
     "0.9098 ± 0.0033"
+  )
+)
+
+kable(auroc_table, caption = "Mean AUROC across five-fold cross-validation for all methods")
+```
+
+Table 3 presents the five-fold cross-validation results for all evaluated methods, reporting AUROC scores for each fold along with their mean and standard deviation.
+
+```{r, echo=FALSE}
+aupr_table <- data.frame(
+  Method = c(
+    "Naïve Baseline",
+    "Kernel Regression",
+    "SVM Linear",
+    "SVM RBF",
+    "VKR NMF",
+    "VKR Weighted NMF",
+    "VKR SVD"
   ),
 
-  AUPR_F1 = c(0.3615, 0.4151, 0.3156, 0.3945, 0.4241, 0.5004, 0.4338),
-  AUPR_F2 = c(0.3674, 0.4228, 0.3243, 0.4030, 0.4282, 0.5006, 0.4427),
-  AUPR_F3 = c(0.3485, 0.4090, 0.3225, 0.3860, 0.4182, 0.4960, 0.4292),
-  AUPR_F4 = c(0.3641, 0.4110, 0.2902, 0.3923, 0.4212, 0.5025, 0.4296),
-  AUPR_F5 = c(0.3506, 0.4194, 0.3085, 0.3836, 0.4233, 0.5010, 0.4353),
-  AUPR_Mean_SD = c(
+  Mean_AUPR_SD = c(
     "0.3584 ± 0.0075",
     "0.4155 ± 0.0051",
     "0.3122 ± 0.0124",
@@ -246,9 +254,10 @@ results <- data.frame(
   )
 )
 
-kable(results, caption = "Five-fold cross-validation results for all methods (AUROC and AUPR)")
+kable(aupr_table, caption = "Mean AUPR across five-fold cross-validation for all methods")
 ```
-Table 3. presents the complete five-fold cross-validation results for all evaluated methods, reporting AUROC and AUPR scores for each fold along with their mean and standard deviation.
+Table 4 presents the five-fold cross-validation results for all evaluated methods, reporting AUPR scores for each fold along with their mean and standard deviation.  
+
 VKR NMF achieved a mean AUROC of 0.9183 ± 0.0027 and a mean AUPR of 0.4230 ± 0.0033 across the five folds. VKR Weighted NMF obtained a mean AUROC of 0.8551 ± 0.0035 and a mean AUPR of 0.5001 ± 0.0022. VKR SVD recorded a mean AUROC of 0.9098 ± 0.0033 and a mean AUPR of 0.4341 ± 0.0049.
 The Naïve Baseline achieved a mean AUROC of 0.9101 ± 0.0024 and a mean AUPR of 0.3584 ± 0.0075. Kernel Regression obtained a mean AUROC of 0.8745 ± 0.0051 and a mean AUPR of 0.4155 ± 0.0051. SVM Linear recorded a mean AUROC of 0.7955 ± 0.0097 and a mean AUPR of 0.3122 ± 0.0124, while SVM RBF achieved a mean AUROC of 0.9001 ± 0.0041 and a mean AUPR of 0.3919 ± 0.0068.
 

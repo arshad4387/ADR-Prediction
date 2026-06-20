@@ -87,20 +87,6 @@ Methods}
 
 \usepackage{amsmath}
 \usepackage{float}
-\usepackage{booktabs}
-\usepackage{longtable}
-\usepackage{array}
-\usepackage{multirow}
-\usepackage{wrapfig}
-\usepackage{float}
-\usepackage{colortbl}
-\usepackage{pdflscape}
-\usepackage{tabu}
-\usepackage{threeparttable}
-\usepackage{threeparttablex}
-\usepackage[normalem]{ulem}
-\usepackage{makecell}
-\usepackage{xcolor}
 \begin{document}
 \maketitle
 
@@ -437,7 +423,7 @@ VKR Weighted NMF & 0.8551 ± 0.0035 & 0.5001 ± 0.0022 \\
 VKR SVD & 0.9098 ± 0.0033 & 0.4341 ± 0.0049 \\
 \end{longtable}
 
-Table 2. Summary of predictive performance for all evaluated methods
+Table 1. Summary of predictive performance for all evaluated methods
 using five-fold cross-validation with a 75\% training and 25\% testing
 split, reporting the mean AUROC and AUPR (± standard deviation) across
 the five folds. The evaluated methods achieved mean AUROC values ranging
@@ -546,134 +532,68 @@ indicates lower values.
 \subsection{Five-Fold Cross-Validation Performance
 Comparison}\label{five-fold-cross-validation-performance-comparison}
 
-\begin{longtable}[]{@{}
-  >{\raggedright\arraybackslash}p{(\linewidth - 24\tabcolsep) * \real{0.1333}}
-  >{\raggedleft\arraybackslash}p{(\linewidth - 24\tabcolsep) * \real{0.0667}}
-  >{\raggedleft\arraybackslash}p{(\linewidth - 24\tabcolsep) * \real{0.0667}}
-  >{\raggedleft\arraybackslash}p{(\linewidth - 24\tabcolsep) * \real{0.0667}}
-  >{\raggedleft\arraybackslash}p{(\linewidth - 24\tabcolsep) * \real{0.0667}}
-  >{\raggedleft\arraybackslash}p{(\linewidth - 24\tabcolsep) * \real{0.0667}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 24\tabcolsep) * \real{0.1185}}
-  >{\raggedleft\arraybackslash}p{(\linewidth - 24\tabcolsep) * \real{0.0593}}
-  >{\raggedleft\arraybackslash}p{(\linewidth - 24\tabcolsep) * \real{0.0593}}
-  >{\raggedleft\arraybackslash}p{(\linewidth - 24\tabcolsep) * \real{0.0593}}
-  >{\raggedleft\arraybackslash}p{(\linewidth - 24\tabcolsep) * \real{0.0593}}
-  >{\raggedleft\arraybackslash}p{(\linewidth - 24\tabcolsep) * \real{0.0593}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 24\tabcolsep) * \real{0.1185}}@{}}
-\caption{Five-fold cross-validation results for all methods (AUROC and
-AUPR)}\tabularnewline
+\begin{longtable}[]{@{}ll@{}}
+\caption{Mean AUROC across five-fold cross-validation for all
+methods}\tabularnewline
 \toprule\noalign{}
-\begin{minipage}[b]{\linewidth}\raggedright
-Method
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-AUROC\_F1
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-AUROC\_F2
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-AUROC\_F3
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-AUROC\_F4
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-AUROC\_F5
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-AUROC\_Mean\_SD
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-AUPR\_F1
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-AUPR\_F2
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-AUPR\_F3
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-AUPR\_F4
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-AUPR\_F5
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-AUPR\_Mean\_SD
-\end{minipage} \\
+Method & Mean\_AUROC\_SD \\
 \midrule\noalign{}
 \endfirsthead
 \toprule\noalign{}
-\begin{minipage}[b]{\linewidth}\raggedright
-Method
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-AUROC\_F1
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-AUROC\_F2
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-AUROC\_F3
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-AUROC\_F4
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-AUROC\_F5
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-AUROC\_Mean\_SD
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-AUPR\_F1
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-AUPR\_F2
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-AUPR\_F3
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-AUPR\_F4
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-AUPR\_F5
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-AUPR\_Mean\_SD
-\end{minipage} \\
+Method & Mean\_AUROC\_SD \\
 \midrule\noalign{}
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-Naive Baseline & 0.9089 & 0.9078 & 0.9083 & 0.9116 & 0.9142 & 0.9101 ±
-0.0024 & 0.3615 & 0.3674 & 0.3485 & 0.3641 & 0.3506 & 0.3584 ± 0.0075 \\
-Kernel Regression & 0.8676 & 0.8727 & 0.8718 & 0.8787 & 0.8819 & 0.8745
-± 0.0051 & 0.4151 & 0.4228 & 0.4090 & 0.4110 & 0.4194 & 0.4155 ±
-0.0051 \\
-SVM Linear & 0.7828 & 0.8003 & 0.8000 & 0.7857 & 0.8087 & 0.7955 ±
-0.0097 & 0.3156 & 0.3243 & 0.3225 & 0.2902 & 0.3085 & 0.3122 ± 0.0124 \\
-SVM RBF & 0.8969 & 0.8974 & 0.9018 & 0.8970 & 0.9074 & 0.9001 ± 0.0041 &
-0.3945 & 0.4030 & 0.3860 & 0.3923 & 0.3836 & 0.3919 ± 0.0068 \\
-VKR NMF & 0.9158 & 0.9163 & 0.9165 & 0.9204 & 0.9226 & 0.9183 ± 0.0027 &
-0.4241 & 0.4282 & 0.4182 & 0.4212 & 0.4233 & 0.4230 ± 0.0033 \\
-VKR Weighted NMF & 0.8510 & 0.8533 & 0.8600 & 0.8587 & 0.8527 & 0.8551 ±
-0.0035 & 0.5004 & 0.5006 & 0.4960 & 0.5025 & 0.5010 & 0.5001 ± 0.0022 \\
-VKR SVD & 0.9051 & 0.9072 & 0.9106 & 0.9118 & 0.9143 & 0.9098 ± 0.0033 &
-0.4338 & 0.4427 & 0.4292 & 0.4296 & 0.4353 & 0.4341 ± 0.0049 \\
+Naïve Baseline & 0.9101 ± 0.0024 \\
+Kernel Regression & 0.8745 ± 0.0051 \\
+SVM Linear & 0.7955 ± 0.0097 \\
+SVM RBF & 0.9001 ± 0.0041 \\
+VKR NMF & 0.9183 ± 0.0027 \\
+VKR Weighted NMF & 0.8551 ± 0.0035 \\
+VKR SVD & 0.9098 ± 0.0033 \\
 \end{longtable}
 
-\begin{verbatim}
-## Warning in styling_latex_scale(out, table_info, "down"): Longtable cannot be
-## resized.
-\end{verbatim}
+Table 3 presents the five-fold cross-validation results for all
+evaluated methods, reporting AUROC scores for each fold along with their
+mean and standard deviation.
 
-\begin{longtable}[t]{lrrrrrlrrrrrl}
-\caption{\label{tab:unnamed-chunk-2}Five-fold cross-validation results}\\
-\toprule
-Method & AUROC\_F1 & AUROC\_F2 & AUROC\_F3 & AUROC\_F4 & AUROC\_F5 & AUROC\_Mean\_SD & AUPR\_F1 & AUPR\_F2 & AUPR\_F3 & AUPR\_F4 & AUPR\_F5 & AUPR\_Mean\_SD\\
-\midrule
-Naive Baseline & 0.9089 & 0.9078 & 0.9083 & 0.9116 & 0.9142 & 0.9101 ± 0.0024 & 0.3615 & 0.3674 & 0.3485 & 0.3641 & 0.3506 & 0.3584 ± 0.0075\\
-Kernel Regression & 0.8676 & 0.8727 & 0.8718 & 0.8787 & 0.8819 & 0.8745 ± 0.0051 & 0.4151 & 0.4228 & 0.4090 & 0.4110 & 0.4194 & 0.4155 ± 0.0051\\
-SVM Linear & 0.7828 & 0.8003 & 0.8000 & 0.7857 & 0.8087 & 0.7955 ± 0.0097 & 0.3156 & 0.3243 & 0.3225 & 0.2902 & 0.3085 & 0.3122 ± 0.0124\\
-SVM RBF & 0.8969 & 0.8974 & 0.9018 & 0.8970 & 0.9074 & 0.9001 ± 0.0041 & 0.3945 & 0.4030 & 0.3860 & 0.3923 & 0.3836 & 0.3919 ± 0.0068\\
-VKR NMF & 0.9158 & 0.9163 & 0.9165 & 0.9204 & 0.9226 & 0.9183 ± 0.0027 & 0.4241 & 0.4282 & 0.4182 & 0.4212 & 0.4233 & 0.4230 ± 0.0033\\
-\addlinespace
-VKR Weighted NMF & 0.8510 & 0.8533 & 0.8600 & 0.8587 & 0.8527 & 0.8551 ± 0.0035 & 0.5004 & 0.5006 & 0.4960 & 0.5025 & 0.5010 & 0.5001 ± 0.0022\\
-VKR SVD & 0.9051 & 0.9072 & 0.9106 & 0.9118 & 0.9143 & 0.9098 ± 0.0033 & 0.4338 & 0.4427 & 0.4292 & 0.4296 & 0.4353 & 0.4341 ± 0.0049\\
-\bottomrule
+\begin{longtable}[]{@{}ll@{}}
+\caption{Mean AUPR across five-fold cross-validation for all
+methods}\tabularnewline
+\toprule\noalign{}
+Method & Mean\_AUPR\_SD \\
+\midrule\noalign{}
+\endfirsthead
+\toprule\noalign{}
+Method & Mean\_AUPR\_SD \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Naïve Baseline & 0.3584 ± 0.0075 \\
+Kernel Regression & 0.4155 ± 0.0051 \\
+SVM Linear & 0.3122 ± 0.0124 \\
+SVM RBF & 0.3919 ± 0.0068 \\
+VKR NMF & 0.4230 ± 0.0033 \\
+VKR Weighted NMF & 0.5001 ± 0.0022 \\
+VKR SVD & 0.4341 ± 0.0049 \\
 \end{longtable}
 
-Table 3. presents the complete five-fold cross-validation results for
-all evaluated methods, reporting AUROC and AUPR scores for each fold
-along with their mean and standard deviation. VKR NMF achieved a mean
-AUROC of 0.9183 ± 0.0027 and a mean AUPR of 0.4230 ± 0.0033 across the
-five folds. VKR Weighted NMF obtained a mean AUROC of 0.8551 ± 0.0035
-and a mean AUPR of 0.5001 ± 0.0022. VKR SVD recorded a mean AUROC of
-0.9098 ± 0.0033 and a mean AUPR of 0.4341 ± 0.0049. The Naïve Baseline
-achieved a mean AUROC of 0.9101 ± 0.0024 and a mean AUPR of 0.3584 ±
-0.0075. Kernel Regression obtained a mean AUROC of 0.8745 ± 0.0051 and a
-mean AUPR of 0.4155 ± 0.0051. SVM Linear recorded a mean AUROC of 0.7955
-± 0.0097 and a mean AUPR of 0.3122 ± 0.0124, while SVM RBF achieved a
-mean AUROC of 0.9001 ± 0.0041 and a mean AUPR of 0.3919 ± 0.0068.
+Table 4 presents the five-fold cross-validation results for all
+evaluated methods, reporting AUPR scores for each fold along with their
+mean and standard deviation.
+
+VKR NMF achieved a mean AUROC of 0.9183 ± 0.0027 and a mean AUPR of
+0.4230 ± 0.0033 across the five folds. VKR Weighted NMF obtained a mean
+AUROC of 0.8551 ± 0.0035 and a mean AUPR of 0.5001 ± 0.0022. VKR SVD
+recorded a mean AUROC of 0.9098 ± 0.0033 and a mean AUPR of 0.4341 ±
+0.0049. The Naïve Baseline achieved a mean AUROC of 0.9101 ± 0.0024 and
+a mean AUPR of 0.3584 ± 0.0075. Kernel Regression obtained a mean AUROC
+of 0.8745 ± 0.0051 and a mean AUPR of 0.4155 ± 0.0051. SVM Linear
+recorded a mean AUROC of 0.7955 ± 0.0097 and a mean AUPR of 0.3122 ±
+0.0124, while SVM RBF achieved a mean AUROC of 0.9001 ± 0.0041 and a
+mean AUPR of 0.3919 ± 0.0068.
 
 \subsection{An Interactive Application for ADR
 Prediction}\label{an-interactive-application-for-adr-prediction}
