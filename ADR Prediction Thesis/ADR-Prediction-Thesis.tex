@@ -180,7 +180,7 @@ positives, AUPR provides a more informative and discriminative
 assessment of the model performance. So, both AUPR and AUROC has been
 evaluated for all the models.
 
-The previous research work from (Zhong, Seoighe, and Yang 2024a) serves
+The previous research work from (Zhong, Seoighe, and Yang 2024) serves
 as a base for our research. It addressed the core issue with imbalanced
 datasets by introducing a novel method called Non-Negative Matrix
 Factorization. In this research, the results from the previous paper is
@@ -440,12 +440,7 @@ all evaluated methods. VKR NMF achieved the strongest overall
 discrimination between positive and negative ADR associations, producing
 the highest AUROC among all evaluated approaches. VKR SVD and the Naïve
 Baseline also demonstrated competitive ROC performance, whereas SVM
-Linear exhibited the weakest discrimination. Kernel Regression and SVM
-RBF showed intermediate performance. Receiver Operating Characteristic
-(ROC) curves for all evaluated methods. (b) Precision, recall, and F1
-score as a function of the decision threshold for the VKR NMF model. The
-dashed vertical line indicates the optimal threshold (0.2265),
-corresponding to precision = 0.4355, recall = 0.4760, and F1 = 0.4549.
+Linear exhibited the weakest discrimination.
 
 \begin{figure}[H]
 
@@ -671,48 +666,44 @@ available in the paper's.
 
 \section{Discussion}\label{discussion}
 
-Adverse drug reactions cause significant patient harm and are a major
-driver of drug withdrawals from the market, and therefore remain a
-critical concern in pharmacovigilance and drug development (Lazarou,
-Pomeranz, and Corey 1998). Being able to predict them computationally
-before a drug reaches widespread clinical use is therefore a problem
-that genuinely matters. This study set out to evaluate whether a range
-of statistical and machine learning methods, drawing on drug-gene
-interaction profiles, chemical fingerprints, and side-effect similarity,
-could predict adverse drug reaction associations in a robust and
-interpretable way. The results demonstrate that this is feasible, while
-also revealing important and often underappreciated challenges in how
-ADR prediction models should be evaluated.
+Adverse drug reactions cause significant patient harm and represent a
+major public health concern in pharmacovigilance and drug safety
+research, as they are frequently associated with hospitalisation and
+serious clinical outcomes (Lazarou, Pomeranz, and Corey 1998). Being
+able to predict them computationally before a drug reaches widespread
+clinical use is therefore an important goal in drug safety research.
+This study set out to evaluate whether a range of statistical and
+machine learning methods, drawing on drug--gene interaction profiles,
+chemical fingerprints, and side-effect similarity, could predict adverse
+drug reaction associations in a robust and interpretable manner. The
+results demonstrate that this is feasible, while also highlighting
+important challenges in the evaluation of ADR prediction models.
 
-A key point from this work is that the choice of evaluation metric is
-very important for highly imbalanced biomedical datasets. In this study,
-AUPR is used as the main metric, while AUROC is treated as a secondary
-measure. This is because the dataset is heavily imbalanced, with far
-more negative drug--reaction pairs than positive ones. The Naïve
-Baseline highlights this issue clearly. Even without using any
-meaningful drug-specific information, it still achieves an AUROC of over
-0.91, which can make it look like a strong model. However, its AUPR is
-only 0.36, showing that it performs poorly in correctly identifying the
-rare positive cases. This difference shows that AUROC can sometimes give
-an overly optimistic view of performance in imbalanced datasets, while
-AUPR gives a more realistic picture of how well the model actually works
-in practice. This finding is also in line with previous studies, which
-suggest that precision--recall based evaluation is more reliable than
-ROC analysis when the data is highly imbalanced (Saito 2015).
+A key point from this work is that choosing the right evaluation metric
+is especially important for highly imbalanced biomedical datasets. In
+this study, AUPR is used as the main evaluation metric, while AUROC is
+reported as a secondary measure. This is because the dataset contains
+far more negative drug--reaction pairs than positive ones. The Naïve
+Baseline clearly shows this effect: although it achieves an AUROC of
+over 0.91 without using any meaningful drug-specific information, its
+AUPR is only 0.36, indicating poor performance in identifying the rare
+positive cases. This difference suggests that AUROC can sometimes give
+an overly optimistic impression of performance when classes are highly
+imbalanced, while AUPR provides a more realistic view of how well the
+model performs in practice. This finding is consistent with previous
+work showing that precision--recall based evaluation is more appropriate
+than ROC analysis in imbalanced settings (Saito 2015).
 
-The difference between VKR NMF and VKR Weighted NMF shows an important
-trade-off in ADR prediction. VKR NMF performs best in terms of
-cross-validated AUROC and gives more precise predictions at standard
-thresholds. This makes it useful when we need high confidence in the
-predicted drug--ADR associations. On the other hand, VKR Weighted NMF
-focuses more on sensitivity across all thresholds. It is able to detect
-most true ADR associations, even at higher thresholds, but this reduces
-its specificity, meaning it produces more false positives. In practical
-use, both models serve different purposes. VKR Weighted NMF is better
-for early-stage drug safety screening, where it is important not to miss
-potential risks. VKR NMF is more suitable for later-stage or
-confirmatory analysis, where higher precision is more important (Paul,
-n.d.).
+The difference between VKR NMF and VKR Weighted NMF reflects the basic
+trade-off between sensitivity and specificity in ADR prediction. In
+pharmacovigilance, methods that prioritise sensitivity are often used in
+early-stage safety screening so that potential signals are not missed,
+even if that means more false positives. In contrast, methods that focus
+on higher specificity are more suitable for confirmatory analysis, where
+the goal is to reduce false alarms and improve confidence in the
+detected associations. This balance between catching as many true
+signals as possible and keeping results reliable is a well-known
+consideration in pharmacovigilance practice (Paul, n.d.).
 
 The threshold analysis further illustrates a well-established
 characteristic of imbalanced classification problems: the conventional
@@ -721,12 +712,12 @@ datasets. For VKR NMF, the optimal F1 score is achieved at a threshold
 of 0.2265, which is substantially lower than the default. At this
 operating point, the model achieves a more balanced trade-off between
 precision and recall. This indicates that models trained on imbalanced
-biomedical data tend to produce conservative probability estimates for
-positive cases, highlighting the importance of threshold calibration
-when translating predicted probabilities into class labels. Using an
-uncalibrated threshold such as 0.5 would result in a substantial loss of
-true positive predictions without meaningful gains in specificity
-(Malone, García-Durán, and Niepert 2018).
+biomedical data may produce biased probability estimates for positive
+cases, highlighting the importance of threshold calibration when
+translating predicted probabilities into class labels. Using a default
+threshold such as 0.5 may lead to reduced sensitivity in detecting
+positive cases under class imbalance (Malone, García-Durán, and Niepert
+2018).
 
 From a modelling perspective, the multi-source feature integration
 approach used in this study seems to work well. Drug--gene interactions,
@@ -739,28 +730,27 @@ able to effectively use these heterogeneous inputs, showing that the
 learned representation space is informative for predicting adverse drug
 reactions. An important contribution of the present study is that it
 builds upon and extends the framework proposed by (Zhong, Seoighe, and
-Yang 2024b), who demonstrated the effectiveness of combining
-non-negative matrix factorisation with kernel regression for adverse
-drug reaction prediction using heterogeneous biological information.
-While their work established the value of latent factorisation
-techniques, the current study broadens this approach by evaluating an
-extended set of biological features, including drug--gene interaction
-profiles, chemical fingerprints, and side-effect similarity, within a
-comprehensive comparative framework. In addition, because ADR prediction
-is a highly imbalanced classification problem, model performance was
-evaluated primarily using the area under the precision--recall curve
-(AUPR), while AUROC was reported as a complementary measure. Threshold
-optimisation was also incorporated into the modelling process to select
-decision thresholds appropriate for the imbalanced setting. The results
-obtained are broadly consistent with those of (Zhong, Seoighe, and Yang
-2024b), confirming that latent factorisation remains an effective
-strategy for ADR prediction, while also demonstrating that careful
-evaluation under imbalanced conditions provides a more realistic
-assessment of model performance. Together, these methodological
-refinements and the accompanying interactive implementation represent a
-practical extension of previous work and contribute to the development
-of more interpretable and clinically relevant computational
-pharmacovigilance tools.
+Yang 2024), who demonstrated the effectiveness of combining non-negative
+matrix factorisation with kernel regression for adverse drug reaction
+prediction using heterogeneous biological information. While their work
+established the value of latent factorisation techniques, the current
+study broadens this approach by evaluating an extended set of biological
+features, including drug--gene interaction profiles, chemical
+fingerprints, and side-effect similarity, within a comprehensive
+comparative framework. In addition, because ADR prediction is a highly
+imbalanced classification problem, model performance was evaluated
+primarily using the area under the precision--recall curve (AUPR), while
+AUROC was reported as a complementary measure. Threshold optimisation
+was also incorporated into the modelling process to select decision
+thresholds appropriate for the imbalanced setting. The results obtained
+are broadly consistent with those of (Zhong, Seoighe, and Yang 2024),
+confirming that latent factorisation remains an effective strategy for
+ADR prediction, while also demonstrating that careful evaluation under
+imbalanced conditions provides a more realistic assessment of model
+performance. Together, these methodological refinements and the
+accompanying interactive implementation represent a practical extension
+of previous work and contribute to the development of more interpretable
+and clinically relevant computational pharmacovigilance tools.
 
 Despite these positive results, several limitations should be
 acknowledged. First, the current framework focuses exclusively on
@@ -776,17 +766,21 @@ reporting bias that may inflate performance on common drug classes while
 limiting generalisability (Hauben and Zhou 2003).
 
 There are several promising directions for future work. Graph neural
-networks represent a natural extension of the current framework, as they
-can directly model drug-protein and protein-protein interaction networks
-in a relational structure rather than relying on flattened feature
-representations (Zitnik, Agrawal, and Leskovec 2018). Extending the
-current framework to drug-drug interaction prediction would also
-significantly increase its clinical relevance. In addition, integrating
-continuously updated pharmacovigilance databases would help address
-temporal drift in drug safety data and improve robustness over time.
-Finally, incorporating additional replicate datasets and cross-source
-validation would help reduce dataset-specific bias and improve
-generalisability across drug classes.
+networks represent a promising extension of the current framework
+because they can model drug--protein, protein--protein, and drug--drug
+interactions within a multimodal graph structure. For example, the
+Decagon framework proposed by Zitnik et al.~constructs a graph
+comprising protein--protein interactions, drug--protein target
+interactions, and polypharmacy side effects, and applies graph
+convolutional neural networks for multirelational link prediction
+(Zitnik, Agrawal, and Leskovec 2018). Extending the current framework to
+drug--drug interaction prediction would also significantly increase its
+clinical relevance. In addition, integrating continuously updated
+pharmacovigilance databases would help address temporal drift in drug
+safety data and improve robustness over time. Finally, incorporating
+additional replicate datasets and cross-source validation would help
+reduce dataset-specific bias and improve generalisability across drug
+classes
 
 Overall, this study establishes a strong and interpretable baseline
 framework for ADR prediction with a rigorous evaluation strategy that
@@ -829,9 +823,10 @@ Freshour, Sharon L., Susanna Kiwala, Kelsy C. Cotto, et al. 2021.
 Open Crowdsource Efforts.''} \emph{Nucleic Acids Research} 49 (D1):
 D1144--51. \url{https://doi.org/10.1093/nar/gkaa1084}.
 
-\bibitem[\citeproctext]{ref-HaubenandZhou2012}
+\bibitem[\citeproctext]{ref-HaubenZhou2003}
 Hauben, Manfred, and Xiaofeng Zhou. 2003. {``Quantitative Methods in
-Pharmacovigilance.''}
+Pharmacovigilance: Focus on Signal Detection.''} \emph{Drug Safety} 26
+(3): 159--86. \url{https://doi.org/10.2165/00002018-200326030-00003}.
 
 \bibitem[\citeproctext]{ref-koyama2024}
 Koyama, Tomoki, Sae Iinuma, Masaaki Yamamoto, Takahiro Niimura, Yuki
@@ -867,17 +862,11 @@ Is More Informative Than the ROC Plot When Evaluating Binary Classifiers
 on Imbalanced Datasets.''} \emph{PLOS ONE} 10 (3): 1--21.
 \url{https://doi.org/10.1371/journal.pone.0118432}.
 
-\bibitem[\citeproctext]{ref-10.1093ux2fbioadvux2fvbae009}
-Zhong, Yezhao, Cathal Seoighe, and Haixuan Yang. 2024a. {``Non-Negative
+\bibitem[\citeproctext]{ref-Zhongetal}
+Zhong, Yezhao, Cathal Seoighe, and Haixuan Yang. 2024. {``Non-Negative
 Matrix Factorization Combined with Kernel Regression for the Prediction
 of Adverse Drug Reaction Profiles.''} \emph{Bioinformatics Advances} 4
 (1): vbae009. \url{https://doi.org/10.1093/bioadv/vbae009}.
-
-\bibitem[\citeproctext]{ref-Zhongetal}
----------. 2024b. {``Non-Negative Matrix Factorization Combined with
-Kernel Regression for the Prediction of Adverse Drug Reaction
-Profiles.''} \emph{Bioinformatics Advances} 4 (1): vbae009.
-\url{https://doi.org/10.1093/bioadv/vbae009}.
 
 \bibitem[\citeproctext]{ref-Zitniketal2018}
 Zitnik, Marinka, Monica Agrawal, and Jure Leskovec. 2018. {``Modeling

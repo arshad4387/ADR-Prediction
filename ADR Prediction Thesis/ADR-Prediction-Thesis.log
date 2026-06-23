@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.6.20)  23 JUN 2026 16:53
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.6.20)  24 JUN 2026 00:28
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -633,7 +633,7 @@ Package pdftex.def Info: figures/2b.png  used on input line 431.
 <figures/2a.png, id=95, 642.4803pt x 354.123pt>
 File: figures/2a.png Graphic file (type png)
 <use figures/2a.png>
-Package pdftex.def Info: figures/2a.png  used on input line 452.
+Package pdftex.def Info: figures/2a.png  used on input line 447.
 (pdftex.def)             Requested size: 328.82706pt x 181.24335pt.
 
 Underfull \vbox (badness 10000) has occurred while \output is active []
@@ -642,18 +642,18 @@ Underfull \vbox (badness 10000) has occurred while \output is active []
 <figures/heatmap.png, id=101, 1290.0195pt x 372.1905pt>
 File: figures/heatmap.png Graphic file (type png)
 <use figures/heatmap.png>
-Package pdftex.def Info: figures/heatmap.png  used on input line 482.
+Package pdftex.def Info: figures/heatmap.png  used on input line 477.
 (pdftex.def)             Requested size: 328.82706pt x 94.8704pt.
 [7 <./figures/2a.png> <./figures/heatmap.png>]
 <figures/app1.png, id=113, 1475.5125pt x 793.96625pt>
 File: figures/app1.png Graphic file (type png)
 <use figures/app1.png>
-Package pdftex.def Info: figures/app1.png  used on input line 650.
+Package pdftex.def Info: figures/app1.png  used on input line 645.
 (pdftex.def)             Requested size: 328.82706pt x 176.9386pt.
 <figures/app2.png, id=114, 1475.5125pt x 791.95876pt>
 File: figures/app2.png Graphic file (type png)
 <use figures/app2.png>
-Package pdftex.def Info: figures/app2.png  used on input line 658.
+Package pdftex.def Info: figures/app2.png  used on input line 653.
 (pdftex.def)             Requested size: 328.82706pt x 176.49123pt.
 
 Underfull \vbox (badness 1924) has occurred while \output is active []
@@ -678,18 +678,18 @@ Package rerunfilecheck Info: File `ADR-Prediction-Thesis.out' has not changed.
 (rerunfilecheck)             Checksum: 2971C4701A016F6B13FED271CA7615EE;1025.
  ) 
 Here is how much of TeX's memory you used:
- 14531 strings out of 469158
- 240878 string characters out of 5458565
- 697482 words of memory out of 5000000
- 43099 multiletter control sequences out of 15000+600000
- 683889 words of font info for 159 fonts, out of 8000000 for 9000
+ 14517 strings out of 469158
+ 240671 string characters out of 5458565
+ 697425 words of memory out of 5000000
+ 43098 multiletter control sequences out of 15000+600000
+ 683344 words of font info for 153 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
  74i,12n,79p,1018b,620s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </Users/saishashankdandu/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx10.pfb></Users/saishashankdandu/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx12.pfb></Users/saishashankdandu/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmcsc10.pfb></Users/saishashankdandu/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmex10.pfb></Users/saishashankdandu/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmmi10.pfb></Users/saishashankdandu/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmmi7.pfb></Users/saishashankdandu/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr10.pfb></Users/saishashankdandu/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr7.pfb></Users/saishashankdandu/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr9.pfb></Users/saishashankdandu/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmri10.pfb></Users/saishashankdandu/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmsy10.pfb></Users/saishashankdandu/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmsy5.pfb></Users/saishashankdandu/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmsy7.pfb></Users/saishashankdandu/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmtt10.pfb></Users/saishashankdandu/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb>
-Output written on ADR-Prediction-Thesis.pdf (11 pages, 2670423 bytes).
+Output written on ADR-Prediction-Thesis.pdf (11 pages, 2669806 bytes).
 PDF statistics:
- 258 PDF objects out of 1000 (max. 8388607)
- 194 compressed objects within 2 object streams
- 53 named destinations out of 1000 (max. 500000)
+ 256 PDF objects out of 1000 (max. 8388607)
+ 192 compressed objects within 2 object streams
+ 52 named destinations out of 1000 (max. 500000)
  33385 words of extra memory for PDF output out of 35830 (max. 10000000)
 
