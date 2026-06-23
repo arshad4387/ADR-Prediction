@@ -185,11 +185,10 @@ Figure 4 presents the variation of precision, recall, and F1 score for the VKR N
 knitr::include_graphics("figures/2b.png")
 ```
 
-Figure 5 presents the Receiver Operating Characteristic (ROC) curves for all evaluated methods. VKR NMF achieved the strongest overall discrimination between positive and negative ADR associations, producing the highest AUROC among all evaluated approaches. VKR SVD and the Naïve Baseline also demonstrated competitive ROC performance, whereas SVM Linear exhibited the weakest discrimination. Kernel Regression and SVM RBF showed intermediate performance. Receiver Operating Characteristic (ROC) curves for all evaluated methods. (b) Precision, recall, and F1 score as a function of the decision threshold for the VKR NMF model. The dashed vertical line indicates the optimal threshold (0.2265), corresponding to precision = 0.4355, recall = 0.4760, and F1 = 0.4549.
+Figure 5 presents the Receiver Operating Characteristic (ROC) curves for all evaluated methods. VKR NMF achieved the strongest overall discrimination between positive and negative ADR associations, producing the highest AUROC among all evaluated approaches. VKR SVD and the Naïve Baseline also demonstrated competitive ROC performance, whereas SVM Linear exhibited the weakest discrimination.
 ```{r fig-precision-recall, echo=FALSE, fig.cap="Precision Recall Curve", out.width="70%", fig.align="center"}
 knitr::include_graphics("figures/2a.png")
 ```
-
 
 Figure 6 presents the sensitivity and specificity of each evaluated method across decision thresholds ranging from 0.1 to 0.9. The heatmaps illustrate each model's ability to correctly identify true ADR associations (sensitivity) while correctly rejecting negative associations (specificity).
 Most models follow the expected pattern in which sensitivity decreases as the decision threshold increases, while specificity increases. The Naïve Baseline, Kernel Regression, SVM variants, VKR NMF, and VKR SVD all exhibit high sensitivity at lower thresholds, followed by a gradual decline as more stringent decision boundaries are applied. By a threshold of 0.5, sensitivity for these models has decreased substantially, whereas specificity exceeds 0.99, indicating a strong ability to avoid false positive predictions.
