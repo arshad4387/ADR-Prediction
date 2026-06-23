@@ -87,6 +87,11 @@ Methods}
 
 \usepackage{amsmath}
 \usepackage{float}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{caption}
+\captionsetup{font=small}
 \begin{document}
 \maketitle
 
@@ -127,7 +132,7 @@ al. 2016).
 Beyond the human cost, ADRs impose substantial financial burdens on
 healthcare systems. The same European Commission analysis estimated that
 197,000 deaths per year in the EU are attributable to ADRs, with a total
-societal cost of €79 billion as of 2008 ({Formosa et al.} 2018).
+societal cost of €79 billion as of 2008 (Formosa et al. 2018).
 Traditional approaches to ADR detection rely primarily on post market
 pharmacovigilance, monitoring drug safety signals after a drug has
 already entered clinical use (Koyama et al. 2024). While these methods
@@ -175,14 +180,14 @@ positives, AUPR provides a more informative and discriminative
 assessment of the model performance. So, both AUPR and AUROC has been
 evaluated for all the models.
 
-The previous research work from (Zhong et al. 2024a) serves as a base
-for our research. It addressed the core issue with imbalanced datasets
-by introducing a novel method called Non-Negative Matrix Factorization.
-In this research, the results from the previous paper is replicated and
-further extended the work by expanding the dataset and introduced a
-novel method, Weighted Non-Negative Matrix Factorization for predicting
-ADRs using drug gene interaction (DGI) profiles and chemical
-fingerprints.
+The previous research work from (Zhong, Seoighe, and Yang 2024a) serves
+as a base for our research. It addressed the core issue with imbalanced
+datasets by introducing a novel method called Non-Negative Matrix
+Factorization. In this research, the results from the previous paper is
+replicated and further extended the work by expanding the dataset and
+introduced a novel method, Weighted Non-Negative Matrix Factorization
+for predicting ADRs using drug gene interaction (DGI) profiles and
+chemical fingerprints.
 
 In the remainder of this paper, Section 2 describes the datasets,
 Section 3 methods, followed by results and discussions.
@@ -202,7 +207,7 @@ to obtain drug--gene interaction data. DGIdb is a web resource that
 aggregates information on drug--gene interactions and druggable genes
 from publications, databases, and other web-based sources, with drug,
 gene, and interaction data normalised and merged into conceptual groups
-({Freshour et al.} 2021).
+(Freshour et al. 2021).
 
 PubChem, a freely accessible chemical database maintained by the
 National Center for Biotechnology Information (NCBI), was used to
@@ -387,91 +392,29 @@ characteristic of the prediction task.
 \caption{Drug Similarity Heatmap}\label{fig:fig-se-heatmap}
 \end{figure}
 
-\subsection{Overall Model Performance}\label{overall-model-performance}
-
-Table 1 summarises the predictive performance of all evaluated methods
-using five-fold cross-validation, where the dataset was randomly
-partitioned into 75\% training data and 25\% testing data in each fold.
-Performance is reported as the mean ± standard deviation of the Area
-Under the Receiver Operating Characteristic Curve (AUROC) and the Area
-Under the Precision--Recall Curve (AUPR) across the five folds, with the
-highest average value for each metric highlighted.
-
-\begin{verbatim}
-## Warning: package 'knitr' was built under R version 4.5.2
-\end{verbatim}
-
-\begin{longtable}[]{@{}lll@{}}
-\caption{Mean performance across five-fold cross-validation (AUROC and
-AUPR)}\tabularnewline
-\toprule\noalign{}
-Method & Mean\_AUROC\_SD & Mean\_AUPR\_SD \\
-\midrule\noalign{}
-\endfirsthead
-\toprule\noalign{}
-Method & Mean\_AUROC\_SD & Mean\_AUPR\_SD \\
-\midrule\noalign{}
-\endhead
-\bottomrule\noalign{}
-\endlastfoot
-Naïve Baseline & 0.9101 ± 0.0024 & 0.3584 ± 0.0075 \\
-Kernel Regression & 0.8745 ± 0.0051 & 0.4155 ± 0.0051 \\
-SVM Linear & 0.7955 ± 0.0097 & 0.3122 ± 0.0124 \\
-SVM RBF & 0.9001 ± 0.0041 & 0.3919 ± 0.0068 \\
-VKR NMF & 0.9183 ± 0.0027 & 0.4230 ± 0.0033 \\
-VKR Weighted NMF & 0.8551 ± 0.0035 & 0.5001 ± 0.0022 \\
-VKR SVD & 0.9098 ± 0.0033 & 0.4341 ± 0.0049 \\
-\end{longtable}
-
-Table 1. Summary of predictive performance for all evaluated methods
-using five-fold cross-validation with a 75\% training and 25\% testing
-split, reporting the mean AUROC and AUPR (± standard deviation) across
-the five folds. The evaluated methods achieved mean AUROC values ranging
-from 0.7955 ± 0.0097 to 0.9183 ± 0.0027, while mean AUPR values ranged
-from 0.3122 ± 0.0124 to 0.5001 ± 0.0022.
+Table 2 summarises the predictive performance of all evaluated methods
+using a single random 75\% training and 25\% testing split. Performance
+is reported in terms of the Area Under the Receiver Operating
+Characteristic Curve (AUROC) and the Area Under the Precision--Recall
+Curve (AUPR), with the highest average value for each metric
+highlighted.
 
 Among all evaluated approaches, VKR NMF achieved the highest mean AUROC
 (0.9183 ± 0.0027) together with a mean AUPR of 0.4230 ± 0.0033,
 indicating the strongest overall discrimination between positive and
-negative ADR associations.
+negative ADR associations. VKR Weighted NMF produced the highest mean
+AUPR (0.5001 ± 0.0022), while achieving a mean AUROC of 0.8551 ± 0.0035.
+VKR SVD also demonstrated strong and consistent performance across all
+five folds, obtaining a mean AUROC of 0.9098 ± 0.0033 and a mean AUPR of
+0.4341 ± 0.0049. The Naïve Baseline achieved the second-highest mean
+AUROC (0.9101 ± 0.0024), although its mean AUPR (0.3584 ± 0.0075) was
+considerably lower than those of the VKR-based methods. Kernel
+Regression and SVM RBF demonstrated intermediate performance across both
+evaluation metrics, whereas SVM Linear produced the lowest overall
+predictive performance, with a mean AUROC of 0.7955 ± 0.0097 and a mean
+AUPR of 0.3122 ± 0.0124.
 
-VKR Weighted NMF produced the highest mean AUPR (0.5001 ± 0.0022), while
-achieving a mean AUROC of 0.8551 ± 0.0035. VKR SVD also demonstrated
-strong and consistent performance across all five folds, obtaining a
-mean AUROC of 0.9098 ± 0.0033 and a mean AUPR of 0.4341 ± 0.0049.
-
-The Naïve Baseline achieved the second-highest mean AUROC (0.9101 ±
-0.0024), although its mean AUPR (0.3584 ± 0.0075) was considerably lower
-than those of the VKR-based methods. Kernel Regression and SVM RBF
-demonstrated intermediate performance across both evaluation metrics,
-whereas SVM Linear produced the lowest overall predictive performance,
-with a mean AUROC of 0.7955 ± 0.0097 and a mean AUPR of 0.3122 ± 0.0124.
-
-\subsection{ROC and Threshold-Based Performance
-Analysis}\label{roc-and-threshold-based-performance-analysis}
-
-Figure 4 presents the Receiver Operating Characteristic (ROC) curves for
-all evaluated methods. VKR NMF achieved the strongest overall
-discrimination between positive and negative ADR associations, producing
-the highest AUROC among all evaluated approaches. VKR SVD and the Naïve
-Baseline also demonstrated competitive ROC performance, whereas SVM
-Linear exhibited the weakest discrimination. Kernel Regression and SVM
-RBF showed intermediate performance. Receiver Operating Characteristic
-(ROC) curves for all evaluated methods. (b) Precision, recall, and F1
-score as a function of the decision threshold for the VKR NMF model. The
-dashed vertical line indicates the optimal threshold (0.2265),
-corresponding to precision = 0.4355, recall = 0.4760, and F1 = 0.4549.
-
-\begin{figure}[H]
-
-{\centering \includegraphics[width=0.7\linewidth]{figures/2a} 
-
-}
-
-\caption{Precision Recall Curve}\label{fig:fig-precision-recall}
-\end{figure}
-
-Figure 5 presents the variation of precision, recall, and F1 score for
+Figure 4 presents the variation of precision, recall, and F1 score for
 the VKR NMF model across different decision thresholds. As the decision
 threshold increases, recall decreases while precision generally
 increases, illustrating the trade-off between identifying true ADR
@@ -492,8 +435,26 @@ imbalanced ADR dataset.
 \caption{ROC Curve for all methods}\label{fig:fig-roc}
 \end{figure}
 
-\subsection{Sensitivity and Specificity Across Decision
-Thresholds}\label{sensitivity-and-specificity-across-decision-thresholds}
+Figure 5 presents the Receiver Operating Characteristic (ROC) curves for
+all evaluated methods. VKR NMF achieved the strongest overall
+discrimination between positive and negative ADR associations, producing
+the highest AUROC among all evaluated approaches. VKR SVD and the Naïve
+Baseline also demonstrated competitive ROC performance, whereas SVM
+Linear exhibited the weakest discrimination. Kernel Regression and SVM
+RBF showed intermediate performance. Receiver Operating Characteristic
+(ROC) curves for all evaluated methods. (b) Precision, recall, and F1
+score as a function of the decision threshold for the VKR NMF model. The
+dashed vertical line indicates the optimal threshold (0.2265),
+corresponding to precision = 0.4355, recall = 0.4760, and F1 = 0.4549.
+
+\begin{figure}[H]
+
+{\centering \includegraphics[width=0.7\linewidth]{figures/2a} 
+
+}
+
+\caption{Precision Recall Curve}\label{fig:fig-precision-recall}
+\end{figure}
 
 Figure 6 presents the sensitivity and specificity of each evaluated
 method across decision thresholds ranging from 0.1 to 0.9. The heatmaps
@@ -525,75 +486,161 @@ VKR Weighted NMF relative to the other evaluated approaches.
 \caption{Sensitivity and specificity heatmaps across all methods and decision thresholds (0.1–0.9). Green indicates higher values, whereas red indicates lower values.}\label{fig:fig-heatmap}
 \end{figure}
 
-Sensitivity and specificity heatmaps across all methods and decision
-thresholds (0.1--0.9). Green indicates higher values, whereas red
-indicates lower values.
+To evaluate the consistency of the results across different data
+partitions, an additional five-fold cross-validation was conducted
+independently of the hold-out evaluation
 
-\subsection{Five-Fold Cross-Validation Performance
-Comparison}\label{five-fold-cross-validation-performance-comparison}
-
-\begin{longtable}[]{@{}ll@{}}
-\caption{Mean AUROC across five-fold cross-validation for all
-methods}\tabularnewline
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.2609}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1014}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1014}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1014}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1014}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1014}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.2319}}@{}}
+\caption{AUROC scores across five folds with mean ± standard
+deviation}\tabularnewline
 \toprule\noalign{}
-Method & Mean\_AUROC\_SD \\
+\begin{minipage}[b]{\linewidth}\raggedright
+Method
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+F1
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+F2
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+F3
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+F4
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+F5
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Mean\_SD
+\end{minipage} \\
 \midrule\noalign{}
 \endfirsthead
 \toprule\noalign{}
-Method & Mean\_AUROC\_SD \\
+\begin{minipage}[b]{\linewidth}\raggedright
+Method
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+F1
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+F2
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+F3
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+F4
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+F5
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Mean\_SD
+\end{minipage} \\
 \midrule\noalign{}
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-Naïve Baseline & 0.9101 ± 0.0024 \\
-Kernel Regression & 0.8745 ± 0.0051 \\
-SVM Linear & 0.7955 ± 0.0097 \\
-SVM RBF & 0.9001 ± 0.0041 \\
-VKR NMF & 0.9183 ± 0.0027 \\
-VKR Weighted NMF & 0.8551 ± 0.0035 \\
-VKR SVD & 0.9098 ± 0.0033 \\
+Naïve Baseline & 0.9089 & 0.9078 & 0.9083 & 0.9116 & 0.9142 & 0.9101 ±
+0.0024 \\
+Kernel Regression & 0.8676 & 0.8727 & 0.8718 & 0.8787 & 0.8819 & 0.8745
+± 0.0051 \\
+SVM Linear & 0.7828 & 0.8003 & 0.8000 & 0.7857 & 0.8087 & 0.7955 ±
+0.0097 \\
+SVM RBF & 0.8969 & 0.8974 & 0.9018 & 0.8970 & 0.9074 & 0.9001 ±
+0.0041 \\
+VKR NMF & 0.9158 & 0.9163 & 0.9165 & 0.9204 & 0.9226 & 0.9183 ±
+0.0027 \\
+VKR Weighted NMF & 0.8510 & 0.8533 & 0.8600 & 0.8587 & 0.8527 & 0.8551 ±
+0.0035 \\
+VKR SVD & 0.9051 & 0.9072 & 0.9106 & 0.9118 & 0.9143 & 0.9098 ±
+0.0033 \\
 \end{longtable}
 
 Table 3 presents the five-fold cross-validation results for all
 evaluated methods, reporting AUROC scores for each fold along with their
 mean and standard deviation.
 
-\begin{longtable}[]{@{}ll@{}}
-\caption{Mean AUPR across five-fold cross-validation for all
-methods}\tabularnewline
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.2609}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1014}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1014}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1014}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1014}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1014}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.2319}}@{}}
+\caption{AUPR scores across five folds with mean ± standard
+deviation}\tabularnewline
 \toprule\noalign{}
-Method & Mean\_AUPR\_SD \\
+\begin{minipage}[b]{\linewidth}\raggedright
+Method
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+F1
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+F2
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+F3
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+F4
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+F5
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Mean\_SD
+\end{minipage} \\
 \midrule\noalign{}
 \endfirsthead
 \toprule\noalign{}
-Method & Mean\_AUPR\_SD \\
+\begin{minipage}[b]{\linewidth}\raggedright
+Method
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+F1
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+F2
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+F3
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+F4
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+F5
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Mean\_SD
+\end{minipage} \\
 \midrule\noalign{}
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-Naïve Baseline & 0.3584 ± 0.0075 \\
-Kernel Regression & 0.4155 ± 0.0051 \\
-SVM Linear & 0.3122 ± 0.0124 \\
-SVM RBF & 0.3919 ± 0.0068 \\
-VKR NMF & 0.4230 ± 0.0033 \\
-VKR Weighted NMF & 0.5001 ± 0.0022 \\
-VKR SVD & 0.4341 ± 0.0049 \\
+Naïve Baseline & 0.3615 & 0.3674 & 0.3485 & 0.3641 & 0.3506 & 0.3584 ±
+0.0075 \\
+Kernel Regression & 0.4151 & 0.4228 & 0.4090 & 0.4110 & 0.4194 & 0.4155
+± 0.0051 \\
+SVM Linear & 0.3156 & 0.3243 & 0.3225 & 0.2902 & 0.3085 & 0.3122 ±
+0.0124 \\
+SVM RBF & 0.3945 & 0.4030 & 0.3860 & 0.3923 & 0.3836 & 0.3919 ±
+0.0068 \\
+VKR NMF & 0.4241 & 0.4282 & 0.4182 & 0.4212 & 0.4233 & 0.4230 ±
+0.0033 \\
+VKR Weighted NMF & 0.5004 & 0.5006 & 0.4960 & 0.5025 & 0.5010 & 0.5001 ±
+0.0022 \\
+VKR SVD & 0.4338 & 0.4427 & 0.4292 & 0.4296 & 0.4353 & 0.4341 ±
+0.0049 \\
 \end{longtable}
 
 Table 4 presents the five-fold cross-validation results for all
 evaluated methods, reporting AUPR scores for each fold along with their
 mean and standard deviation.
 
-VKR NMF achieved a mean AUROC of 0.9183 ± 0.0027 and a mean AUPR of
-0.4230 ± 0.0033 across the five folds. VKR Weighted NMF obtained a mean
-AUROC of 0.8551 ± 0.0035 and a mean AUPR of 0.5001 ± 0.0022. VKR SVD
-recorded a mean AUROC of 0.9098 ± 0.0033 and a mean AUPR of 0.4341 ±
-0.0049. The Naïve Baseline achieved a mean AUROC of 0.9101 ± 0.0024 and
-a mean AUPR of 0.3584 ± 0.0075. Kernel Regression obtained a mean AUROC
-of 0.8745 ± 0.0051 and a mean AUPR of 0.4155 ± 0.0051. SVM Linear
-recorded a mean AUROC of 0.7955 ± 0.0097 and a mean AUPR of 0.3122 ±
-0.0124, while SVM RBF achieved a mean AUROC of 0.9001 ± 0.0041 and a
-mean AUPR of 0.3919 ± 0.0068.
+Across the five folds, VKR Weighted NMF achieved the highest mean AUPR
+(0.5001 ± 0.0022), clearly outperforming all other evaluated methods in
+terms of precision--recall performance, while maintaining a competitive
+AUROC of 0.8551 ± 0.0035. VKR NMF achieved the highest mean AUROC
+(0.9183 ± 0.0027), together with a mean AUPR of 0.4230 ± 0.0033,
+indicating strong overall discrimination. VKR SVD also demonstrated
+consistently strong performance, with a mean AUROC of 0.9098 ± 0.0033
+and a mean AUPR of 0.4341 ± 0.0049. In comparison, the Naïve Baseline
+achieved a mean AUROC of 0.9101 ± 0.0024 but a substantially lower mean
+AUPR of 0.3584 ± 0.0075, indicating weaker performance under imbalanced
+conditions. Kernel Regression obtained a mean AUROC of 0.8745 ± 0.0051
+and a mean AUPR of 0.4155 ± 0.0051, while SVM RBF achieved 0.9001 ±
+0.0041 and 0.3919 ± 0.0068 respectively. SVM Linear recorded the lowest
+performance overall, with a mean AUROC of 0.7955 ± 0.0097 and a mean
+AUPR of 0.3122 ± 0.0124.
 
 \subsection{An Interactive Application for ADR
 Prediction}\label{an-interactive-application-for-adr-prediction}
@@ -619,23 +666,23 @@ Figure 7 and 8, displays a snapshot of an interactive web application
 allowing users to input a drug and receive a ranked list of predicted
 adverse drug reactions from the best-performing model. The app can be
 run locally where the code, datasets, and deployment steps are all
-available in the paper's
+available in the paper's.
 \href{https://github.com/arshad4387/ADR-Prediction}{GitHub repository}
 
 \section{Discussion}\label{discussion}
 
 Adverse drug reactions cause significant patient harm and are a major
 driver of drug withdrawals from the market, and therefore remain a
-critical concern in pharmacovigilance and drug development (Lazarou et
-al. 1998). Being able to predict them computationally before a drug
-reaches widespread clinical use is therefore a problem that genuinely
-matters. This study set out to evaluate whether a range of statistical
-and machine learning methods, drawing on drug-gene interaction profiles,
-chemical fingerprints, and side-effect similarity, could predict adverse
-drug reaction associations in a robust and interpretable way. The
-results demonstrate that this is feasible, while also revealing
-important and often underappreciated challenges in how ADR prediction
-models should be evaluated.
+critical concern in pharmacovigilance and drug development (Lazarou,
+Pomeranz, and Corey 1998). Being able to predict them computationally
+before a drug reaches widespread clinical use is therefore a problem
+that genuinely matters. This study set out to evaluate whether a range
+of statistical and machine learning methods, drawing on drug-gene
+interaction profiles, chemical fingerprints, and side-effect similarity,
+could predict adverse drug reaction associations in a robust and
+interpretable way. The results demonstrate that this is feasible, while
+also revealing important and often underappreciated challenges in how
+ADR prediction models should be evaluated.
 
 A key point from this work is that the choice of evaluation metric is
 very important for highly imbalanced biomedical datasets. In this study,
@@ -679,7 +726,7 @@ positive cases, highlighting the importance of threshold calibration
 when translating predicted probabilities into class labels. Using an
 uncalibrated threshold such as 0.5 would result in a substantial loss of
 true positive predictions without meaningful gains in specificity
-(Malone et al. 2018).
+(Malone, García-Durán, and Niepert 2018).
 
 From a modelling perspective, the multi-source feature integration
 approach used in this study seems to work well. Drug--gene interactions,
@@ -691,28 +738,29 @@ patterns. In particular, latent factorisation methods like VKR NMF are
 able to effectively use these heterogeneous inputs, showing that the
 learned representation space is informative for predicting adverse drug
 reactions. An important contribution of the present study is that it
-builds upon and extends the framework proposed by (Zhong et al. 2024b),
-who demonstrated the effectiveness of combining non-negative matrix
-factorisation with kernel regression for adverse drug reaction
-prediction using heterogeneous biological information. While their work
-established the value of latent factorisation techniques, the current
-study broadens this approach by evaluating an extended set of biological
-features, including drug--gene interaction profiles, chemical
-fingerprints, and side-effect similarity, within a comprehensive
-comparative framework. In addition, because ADR prediction is a highly
-imbalanced classification problem, model performance was evaluated
-primarily using the area under the precision--recall curve (AUPR), while
-AUROC was reported as a complementary measure. Threshold optimisation
-was also incorporated into the modelling process to select decision
-thresholds appropriate for the imbalanced setting. The results obtained
-are broadly consistent with those of (Zhong et al. 2024b), confirming
-that latent factorisation remains an effective strategy for ADR
-prediction, while also demonstrating that careful evaluation under
-imbalanced conditions provides a more realistic assessment of model
-performance. Together, these methodological refinements and the
-accompanying interactive implementation represent a practical extension
-of previous work and contribute to the development of more interpretable
-and clinically relevant computational pharmacovigilance tools.
+builds upon and extends the framework proposed by (Zhong, Seoighe, and
+Yang 2024b), who demonstrated the effectiveness of combining
+non-negative matrix factorisation with kernel regression for adverse
+drug reaction prediction using heterogeneous biological information.
+While their work established the value of latent factorisation
+techniques, the current study broadens this approach by evaluating an
+extended set of biological features, including drug--gene interaction
+profiles, chemical fingerprints, and side-effect similarity, within a
+comprehensive comparative framework. In addition, because ADR prediction
+is a highly imbalanced classification problem, model performance was
+evaluated primarily using the area under the precision--recall curve
+(AUPR), while AUROC was reported as a complementary measure. Threshold
+optimisation was also incorporated into the modelling process to select
+decision thresholds appropriate for the imbalanced setting. The results
+obtained are broadly consistent with those of (Zhong, Seoighe, and Yang
+2024b), confirming that latent factorisation remains an effective
+strategy for ADR prediction, while also demonstrating that careful
+evaluation under imbalanced conditions provides a more realistic
+assessment of model performance. Together, these methodological
+refinements and the accompanying interactive implementation represent a
+practical extension of previous work and contribute to the development
+of more interpretable and clinically relevant computational
+pharmacovigilance tools.
 
 Despite these positive results, several limitations should be
 acknowledged. First, the current framework focuses exclusively on
@@ -731,14 +779,14 @@ There are several promising directions for future work. Graph neural
 networks represent a natural extension of the current framework, as they
 can directly model drug-protein and protein-protein interaction networks
 in a relational structure rather than relying on flattened feature
-representations (Zitnik et al. 2018). Extending the current framework to
-drug-drug interaction prediction would also significantly increase its
-clinical relevance. In addition, integrating continuously updated
-pharmacovigilance databases would help address temporal drift in drug
-safety data and improve robustness over time. Finally, incorporating
-additional replicate datasets and cross-source validation would help
-reduce dataset-specific bias and improve generalisability across drug
-classes.
+representations (Zitnik, Agrawal, and Leskovec 2018). Extending the
+current framework to drug-drug interaction prediction would also
+significantly increase its clinical relevance. In addition, integrating
+continuously updated pharmacovigilance databases would help address
+temporal drift in drug safety data and improve robustness over time.
+Finally, incorporating additional replicate datasets and cross-source
+validation would help reduce dataset-specific bias and improve
+generalisability across drug classes.
 
 Overall, this study establishes a strong and interpretable baseline
 framework for ADR prediction with a rigorous evaluation strategy that
@@ -749,10 +797,10 @@ predictive performance than approaches that rely primarily on AUROC. The
 resulting system is not only analytically robust but also practically
 usable through the accompanying interactive application, and it provides
 a solid foundation for future extensions in computational drug safety
-prediction.
+prediction. \# References
 
-\protect\phantomsection\label{refs}
-\begin{CSLReferences}{1}{1}
+\phantomsection\label{refs}
+\begin{CSLReferences}{1}{0}
 \bibitem[\citeproctext]{ref-angamo2016}
 Angamo, Mirkuzie T., Leanne Chalmers, Colin M. Curtain, and Luke R. E.
 Bereznicki. 2016. {``Adverse-Drug-Reaction-Related Hospitalisations in
@@ -768,26 +816,27 @@ Interactions: A Systematic Review and Meta-Analysis.''}
 https://doi.org/\url{https://doi.org/10.1002/pds.3592}.
 
 \bibitem[\citeproctext]{ref-formosa2018}
-{Formosa, Sigrid et al.} 2018. {``Adverse Drug Reactions in Hospitalized
+Formosa, Sigrid et al. 2018. {``Adverse Drug Reactions in Hospitalized
 Patients: Results of the FORWARD Study.''} \emph{Frontiers in
 Pharmacology}.
 
 \bibitem[\citeproctext]{ref-freshour2021dgidb}
-{Freshour, Sharon L., Susanna Kiwala, Kelsy C. Cotto, et al.} 2021.
+Freshour, Sharon L., Susanna Kiwala, Kelsy C. Cotto, et al. 2021.
 {``Integration of the Drug--Gene Interaction Database (DGIdb 4.0) with
 Open Crowdsource Efforts.''} \emph{Nucleic Acids Research} 49 (D1):
 D1144--51. \url{https://doi.org/10.1093/nar/gkaa1084}.
 
 \bibitem[\citeproctext]{ref-HaubenandZhou2012}
-Hauben, Manfred, and Xiaofeng Zhou. 2003. \emph{Quantitative Methods in
-Pharmacovigilance}.
+Hauben, Manfred, and Xiaofeng Zhou. 2003. {``Quantitative Methods in
+Pharmacovigilance.''}
 
 \bibitem[\citeproctext]{ref-koyama2024}
-Koyama, Tomoki, Sae Iinuma, Masaaki Yamamoto, et al. 2024.
-{``International Trends in Adverse Drug Event-Related Mortality from
-2001 to 2019: An Analysis of the World Health Organization Mortality
-Database from 54 Countries.''} \emph{Drug Safety} 47: 237--49.
-\url{https://doi.org/10.1007/s40264-023-01387-0}.
+Koyama, Tomoki, Sae Iinuma, Masaaki Yamamoto, Takahiro Niimura, Yuki
+Osaki, Saki Nishimura, Kenta Harada, Yoshito Zamami, and Hideharu
+Hagiya. 2024. {``International Trends in Adverse Drug Event-Related
+Mortality from 2001 to 2019: An Analysis of the World Health
+Organization Mortality Database from 54 Countries.''} \emph{Drug Safety}
+47: 237--49. \url{https://doi.org/10.1007/s40264-023-01387-0}.
 
 \bibitem[\citeproctext]{ref-kuhn2016sider}
 Kuhn, Michael, Ivica Letunic, Lars Juhl Jensen, and Peer Bork. 2016.
@@ -802,12 +851,12 @@ Prospective Studies.''} \emph{JAMA} 279 (15): 1200--1205.
 
 \bibitem[\citeproctext]{ref-malone2018}
 Malone, Brandon M., Alberto García-Durán, and Mathias Niepert. 2018.
-\emph{Knowledge Graph Completion to Predict Polypharmacy Side Effects}.
+{``Knowledge Graph Completion to Predict Polypharmacy Side Effects.''}
 
 \bibitem[\citeproctext]{ref-Pauletal2010}
-Paul, Mytelka, S. n.d. \emph{How to Improve r\&d Productivity: The
+Paul, Mytelka, S. n.d. {``How to Improve r\&d Productivity: The
 Pharmaceutical Industry's Grand Challenge. Nat Rev Drug Discov 9,
-203--214 (2010).}
+203--214 (2010).''}
 
 \bibitem[\citeproctext]{ref-SaitoandRehmsmeier2015}
 Saito, Marc, Takaya AND Rehmsmeier. 2015. {``The Precision-Recall Plot
@@ -822,10 +871,10 @@ of Adverse Drug Reaction Profiles.''} \emph{Bioinformatics Advances} 4
 (1): vbae009. \url{https://doi.org/10.1093/bioadv/vbae009}.
 
 \bibitem[\citeproctext]{ref-Zhongetal}
-Zhong, Yezhao, Cathal Seoighe, and Haixuan Yang. 2024b. {``Non-Negative
-Matrix Factorization Combined with Kernel Regression for the Prediction
-of Adverse Drug Reaction Profiles.''} \emph{Bioinformatics Advances} 4
-(1): vbae009. \url{https://doi.org/10.1093/bioadv/vbae009}.
+---------. 2024b. {``Non-Negative Matrix Factorization Combined with
+Kernel Regression for the Prediction of Adverse Drug Reaction
+Profiles.''} \emph{Bioinformatics Advances} 4 (1): vbae009.
+\url{https://doi.org/10.1093/bioadv/vbae009}.
 
 \bibitem[\citeproctext]{ref-Zitniketal2018}
 Zitnik, Marinka, Monica Agrawal, and Jure Leskovec. 2018. {``Modeling
