@@ -667,18 +667,19 @@ potential risks. VKR NMF is more suitable for later-stage or
 confirmatory analysis, where higher precision is more important (Paul,
 n.d.).
 
-The threshold analysis further reinforces an important methodological
-point: the conventional default threshold of 0.5 is not appropriate for
-imbalanced ADR datasets. For VKR NMF, the optimal F1 score is achieved
-at a threshold of 0.2265, which is substantially lower than the default.
-At this operating point, the model achieves a more balanced trade-off
-between precision and recall. This indicates that models trained on
-imbalanced biomedical data tend to produce conservative probability
-estimates for positive cases, and that threshold calibration is
-therefore a critical step rather than a post hoc adjustment. Using an
+The threshold analysis further illustrates a well-established
+characteristic of imbalanced classification problems: the conventional
+default threshold of 0.5 is often not appropriate for imbalanced ADR
+datasets. For VKR NMF, the optimal F1 score is achieved at a threshold
+of 0.2265, which is substantially lower than the default. At this
+operating point, the model achieves a more balanced trade-off between
+precision and recall. This indicates that models trained on imbalanced
+biomedical data tend to produce conservative probability estimates for
+positive cases, highlighting the importance of threshold calibration
+when translating predicted probabilities into class labels. Using an
 uncalibrated threshold such as 0.5 would result in a substantial loss of
 true positive predictions without meaningful gains in specificity
-(Malone, García-Durán, and Niepert 2018).
+(\textbf{Maloneetal2018?}).
 
 From a modelling perspective, the multi-source feature integration
 approach used in this study seems to work well. Drug--gene interactions,
@@ -698,19 +699,21 @@ While their work established the value of latent factorisation
 techniques, the current study broadens this approach by evaluating an
 extended set of biological features, including drug--gene interaction
 profiles, chemical fingerprints, and side-effect similarity, within a
-comprehensive comparative framework. In addition, rather than focusing
-primarily on overall discrimination performance, this study places
-particular emphasis on the challenges posed by class imbalance by
-adopting AUPR as the principal evaluation metric and incorporating
-threshold optimisation into the modelling process. The results obtained
-are broadly consistent with those of (Zhong, Seoighe, and Yang 2024b),
-confirming that latent factorisation remains an effective strategy for
-ADR prediction, while also demonstrating that careful evaluation under
-imbalanced conditions provides a more realistic assessment of model
-performance. Together, these methodological refinements and the
-accompanying interactive implementation represent a practical extension
-of previous work and contribute to the development of more interpretable
-and clinically relevant computational pharmacovigilance tools.
+comprehensive comparative framework. In addition, because ADR prediction
+is a highly imbalanced classification problem, model performance was
+evaluated primarily using the area under the precision--recall curve
+(AUPR), while AUROC was reported as a complementary measure. Threshold
+optimisation was also incorporated into the modelling process to select
+decision thresholds appropriate for the imbalanced setting. The results
+obtained are broadly consistent with those of (Zhong, Seoighe, and Yang
+2024b), confirming that latent factorisation remains an effective
+strategy for ADR prediction, while also demonstrating that careful
+evaluation under imbalanced conditions provides a more realistic
+assessment of model performance. Together, these methodological
+refinements and the accompanying interactive implementation represent a
+practical extension of previous work and contribute to the development
+of more interpretable and clinically relevant computational
+pharmacovigilance tools.
 
 Despite these positive results, several limitations should be
 acknowledged. First, the current framework focuses exclusively on
@@ -798,10 +801,6 @@ Lazarou, Jason, Bruce H. Pomeranz, and Paul N. Corey. 1998. {``Incidence
 of Adverse Drug Reactions in Hospitalized PatientsA Meta-Analysis of
 Prospective Studies.''} \emph{JAMA} 279 (15): 1200--1205.
 \url{https://doi.org/10.1001/jama.279.15.1200}.
-
-\bibitem[\citeproctext]{ref-malone2018}
-Malone, Brandon M., Alberto García-Durán, and Mathias Niepert. 2018.
-{``Knowledge Graph Completion to Predict Polypharmacy Side Effects.''}
 
 \bibitem[\citeproctext]{ref-Pauletal2010}
 Paul, Mytelka, S. n.d. {``How to Improve r\&d Productivity: The
