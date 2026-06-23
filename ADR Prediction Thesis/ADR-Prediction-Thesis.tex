@@ -127,7 +127,7 @@ al. 2016).
 Beyond the human cost, ADRs impose substantial financial burdens on
 healthcare systems. The same European Commission analysis estimated that
 197,000 deaths per year in the EU are attributable to ADRs, with a total
-societal cost of €79 billion as of 2008 (Formosa et al. 2018).
+societal cost of €79 billion as of 2008 ({Formosa et al.} 2018).
 Traditional approaches to ADR detection rely primarily on post market
 pharmacovigilance, monitoring drug safety signals after a drug has
 already entered clinical use (Koyama et al. 2024). While these methods
@@ -175,14 +175,14 @@ positives, AUPR provides a more informative and discriminative
 assessment of the model performance. So, both AUPR and AUROC has been
 evaluated for all the models.
 
-The previous research work from (Zhong, Seoighe, and Yang 2024a) serves
-as a base for our research. It addressed the core issue with imbalanced
-datasets by introducing a novel method called Non-Negative Matrix
-Factorization. In this research, the results from the previous paper is
-replicated and further extended the work by expanding the dataset and
-introduced a novel method, Weighted Non-Negative Matrix Factorization
-for predicting ADRs using drug gene interaction (DGI) profiles and
-chemical fingerprints.
+The previous research work from (Zhong et al. 2024a) serves as a base
+for our research. It addressed the core issue with imbalanced datasets
+by introducing a novel method called Non-Negative Matrix Factorization.
+In this research, the results from the previous paper is replicated and
+further extended the work by expanding the dataset and introduced a
+novel method, Weighted Non-Negative Matrix Factorization for predicting
+ADRs using drug gene interaction (DGI) profiles and chemical
+fingerprints.
 
 In the remainder of this paper, Section 2 describes the datasets,
 Section 3 methods, followed by results and discussions.
@@ -202,7 +202,7 @@ to obtain drug--gene interaction data. DGIdb is a web resource that
 aggregates information on drug--gene interactions and druggable genes
 from publications, databases, and other web-based sources, with drug,
 gene, and interaction data normalised and merged into conceptual groups
-(Freshour et al. 2021).
+({Freshour et al.} 2021).
 
 PubChem, a freely accessible chemical database maintained by the
 National Center for Biotechnology Information (NCBI), was used to
@@ -626,16 +626,16 @@ available in the paper's
 
 Adverse drug reactions cause significant patient harm and are a major
 driver of drug withdrawals from the market, and therefore remain a
-critical concern in pharmacovigilance and drug development (Lazarou,
-Pomeranz, and Corey 1998). Being able to predict them computationally
-before a drug reaches widespread clinical use is therefore a problem
-that genuinely matters. This study set out to evaluate whether a range
-of statistical and machine learning methods, drawing on drug-gene
-interaction profiles, chemical fingerprints, and side-effect similarity,
-could predict adverse drug reaction associations in a robust and
-interpretable way. The results demonstrate that this is feasible, while
-also revealing important and often underappreciated challenges in how
-ADR prediction models should be evaluated.
+critical concern in pharmacovigilance and drug development (Lazarou et
+al. 1998). Being able to predict them computationally before a drug
+reaches widespread clinical use is therefore a problem that genuinely
+matters. This study set out to evaluate whether a range of statistical
+and machine learning methods, drawing on drug-gene interaction profiles,
+chemical fingerprints, and side-effect similarity, could predict adverse
+drug reaction associations in a robust and interpretable way. The
+results demonstrate that this is feasible, while also revealing
+important and often underappreciated challenges in how ADR prediction
+models should be evaluated.
 
 A key point from this work is that the choice of evaluation metric is
 very important for highly imbalanced biomedical datasets. In this study,
@@ -679,7 +679,7 @@ positive cases, highlighting the importance of threshold calibration
 when translating predicted probabilities into class labels. Using an
 uncalibrated threshold such as 0.5 would result in a substantial loss of
 true positive predictions without meaningful gains in specificity
-(\textbf{Maloneetal2018?}).
+(Malone et al. 2018).
 
 From a modelling perspective, the multi-source feature integration
 approach used in this study seems to work well. Drug--gene interactions,
@@ -691,29 +691,28 @@ patterns. In particular, latent factorisation methods like VKR NMF are
 able to effectively use these heterogeneous inputs, showing that the
 learned representation space is informative for predicting adverse drug
 reactions. An important contribution of the present study is that it
-builds upon and extends the framework proposed by (Zhong, Seoighe, and
-Yang 2024b), who demonstrated the effectiveness of combining
-non-negative matrix factorisation with kernel regression for adverse
-drug reaction prediction using heterogeneous biological information.
-While their work established the value of latent factorisation
-techniques, the current study broadens this approach by evaluating an
-extended set of biological features, including drug--gene interaction
-profiles, chemical fingerprints, and side-effect similarity, within a
-comprehensive comparative framework. In addition, because ADR prediction
-is a highly imbalanced classification problem, model performance was
-evaluated primarily using the area under the precision--recall curve
-(AUPR), while AUROC was reported as a complementary measure. Threshold
-optimisation was also incorporated into the modelling process to select
-decision thresholds appropriate for the imbalanced setting. The results
-obtained are broadly consistent with those of (Zhong, Seoighe, and Yang
-2024b), confirming that latent factorisation remains an effective
-strategy for ADR prediction, while also demonstrating that careful
-evaluation under imbalanced conditions provides a more realistic
-assessment of model performance. Together, these methodological
-refinements and the accompanying interactive implementation represent a
-practical extension of previous work and contribute to the development
-of more interpretable and clinically relevant computational
-pharmacovigilance tools.
+builds upon and extends the framework proposed by (Zhong et al. 2024b),
+who demonstrated the effectiveness of combining non-negative matrix
+factorisation with kernel regression for adverse drug reaction
+prediction using heterogeneous biological information. While their work
+established the value of latent factorisation techniques, the current
+study broadens this approach by evaluating an extended set of biological
+features, including drug--gene interaction profiles, chemical
+fingerprints, and side-effect similarity, within a comprehensive
+comparative framework. In addition, because ADR prediction is a highly
+imbalanced classification problem, model performance was evaluated
+primarily using the area under the precision--recall curve (AUPR), while
+AUROC was reported as a complementary measure. Threshold optimisation
+was also incorporated into the modelling process to select decision
+thresholds appropriate for the imbalanced setting. The results obtained
+are broadly consistent with those of (Zhong et al. 2024b), confirming
+that latent factorisation remains an effective strategy for ADR
+prediction, while also demonstrating that careful evaluation under
+imbalanced conditions provides a more realistic assessment of model
+performance. Together, these methodological refinements and the
+accompanying interactive implementation represent a practical extension
+of previous work and contribute to the development of more interpretable
+and clinically relevant computational pharmacovigilance tools.
 
 Despite these positive results, several limitations should be
 acknowledged. First, the current framework focuses exclusively on
@@ -732,14 +731,14 @@ There are several promising directions for future work. Graph neural
 networks represent a natural extension of the current framework, as they
 can directly model drug-protein and protein-protein interaction networks
 in a relational structure rather than relying on flattened feature
-representations (Zitnik, Agrawal, and Leskovec 2018). Extending the
-current framework to drug-drug interaction prediction would also
-significantly increase its clinical relevance. In addition, integrating
-continuously updated pharmacovigilance databases would help address
-temporal drift in drug safety data and improve robustness over time.
-Finally, incorporating additional replicate datasets and cross-source
-validation would help reduce dataset-specific bias and improve
-generalisability across drug classes.
+representations (Zitnik et al. 2018). Extending the current framework to
+drug-drug interaction prediction would also significantly increase its
+clinical relevance. In addition, integrating continuously updated
+pharmacovigilance databases would help address temporal drift in drug
+safety data and improve robustness over time. Finally, incorporating
+additional replicate datasets and cross-source validation would help
+reduce dataset-specific bias and improve generalisability across drug
+classes.
 
 Overall, this study establishes a strong and interpretable baseline
 framework for ADR prediction with a rigorous evaluation strategy that
@@ -752,8 +751,8 @@ usable through the accompanying interactive application, and it provides
 a solid foundation for future extensions in computational drug safety
 prediction.
 
-\phantomsection\label{refs}
-\begin{CSLReferences}{1}{0}
+\protect\phantomsection\label{refs}
+\begin{CSLReferences}{1}{1}
 \bibitem[\citeproctext]{ref-angamo2016}
 Angamo, Mirkuzie T., Leanne Chalmers, Colin M. Curtain, and Luke R. E.
 Bereznicki. 2016. {``Adverse-Drug-Reaction-Related Hospitalisations in
@@ -769,27 +768,26 @@ Interactions: A Systematic Review and Meta-Analysis.''}
 https://doi.org/\url{https://doi.org/10.1002/pds.3592}.
 
 \bibitem[\citeproctext]{ref-formosa2018}
-Formosa, Sigrid et al. 2018. {``Adverse Drug Reactions in Hospitalized
+{Formosa, Sigrid et al.} 2018. {``Adverse Drug Reactions in Hospitalized
 Patients: Results of the FORWARD Study.''} \emph{Frontiers in
 Pharmacology}.
 
 \bibitem[\citeproctext]{ref-freshour2021dgidb}
-Freshour, Sharon L., Susanna Kiwala, Kelsy C. Cotto, et al. 2021.
+{Freshour, Sharon L., Susanna Kiwala, Kelsy C. Cotto, et al.} 2021.
 {``Integration of the Drug--Gene Interaction Database (DGIdb 4.0) with
 Open Crowdsource Efforts.''} \emph{Nucleic Acids Research} 49 (D1):
 D1144--51. \url{https://doi.org/10.1093/nar/gkaa1084}.
 
 \bibitem[\citeproctext]{ref-HaubenandZhou2012}
-Hauben, Manfred, and Xiaofeng Zhou. 2003. {``Quantitative Methods in
-Pharmacovigilance.''}
+Hauben, Manfred, and Xiaofeng Zhou. 2003. \emph{Quantitative Methods in
+Pharmacovigilance}.
 
 \bibitem[\citeproctext]{ref-koyama2024}
-Koyama, Tomoki, Sae Iinuma, Masaaki Yamamoto, Takahiro Niimura, Yuki
-Osaki, Saki Nishimura, Kenta Harada, Yoshito Zamami, and Hideharu
-Hagiya. 2024. {``International Trends in Adverse Drug Event-Related
-Mortality from 2001 to 2019: An Analysis of the World Health
-Organization Mortality Database from 54 Countries.''} \emph{Drug Safety}
-47: 237--49. \url{https://doi.org/10.1007/s40264-023-01387-0}.
+Koyama, Tomoki, Sae Iinuma, Masaaki Yamamoto, et al. 2024.
+{``International Trends in Adverse Drug Event-Related Mortality from
+2001 to 2019: An Analysis of the World Health Organization Mortality
+Database from 54 Countries.''} \emph{Drug Safety} 47: 237--49.
+\url{https://doi.org/10.1007/s40264-023-01387-0}.
 
 \bibitem[\citeproctext]{ref-kuhn2016sider}
 Kuhn, Michael, Ivica Letunic, Lars Juhl Jensen, and Peer Bork. 2016.
@@ -802,10 +800,14 @@ of Adverse Drug Reactions in Hospitalized PatientsA Meta-Analysis of
 Prospective Studies.''} \emph{JAMA} 279 (15): 1200--1205.
 \url{https://doi.org/10.1001/jama.279.15.1200}.
 
+\bibitem[\citeproctext]{ref-malone2018}
+Malone, Brandon M., Alberto García-Durán, and Mathias Niepert. 2018.
+\emph{Knowledge Graph Completion to Predict Polypharmacy Side Effects}.
+
 \bibitem[\citeproctext]{ref-Pauletal2010}
-Paul, Mytelka, S. n.d. {``How to Improve r\&d Productivity: The
+Paul, Mytelka, S. n.d. \emph{How to Improve r\&d Productivity: The
 Pharmaceutical Industry's Grand Challenge. Nat Rev Drug Discov 9,
-203--214 (2010).''}
+203--214 (2010).}
 
 \bibitem[\citeproctext]{ref-SaitoandRehmsmeier2015}
 Saito, Marc, Takaya AND Rehmsmeier. 2015. {``The Precision-Recall Plot
@@ -820,10 +822,10 @@ of Adverse Drug Reaction Profiles.''} \emph{Bioinformatics Advances} 4
 (1): vbae009. \url{https://doi.org/10.1093/bioadv/vbae009}.
 
 \bibitem[\citeproctext]{ref-Zhongetal}
----------. 2024b. {``Non-Negative Matrix Factorization Combined with
-Kernel Regression for the Prediction of Adverse Drug Reaction
-Profiles.''} \emph{Bioinformatics Advances} 4 (1): vbae009.
-\url{https://doi.org/10.1093/bioadv/vbae009}.
+Zhong, Yezhao, Cathal Seoighe, and Haixuan Yang. 2024b. {``Non-Negative
+Matrix Factorization Combined with Kernel Regression for the Prediction
+of Adverse Drug Reaction Profiles.''} \emph{Bioinformatics Advances} 4
+(1): vbae009. \url{https://doi.org/10.1093/bioadv/vbae009}.
 
 \bibitem[\citeproctext]{ref-Zitniketal2018}
 Zitnik, Marinka, Monica Agrawal, and Jure Leskovec. 2018. {``Modeling
