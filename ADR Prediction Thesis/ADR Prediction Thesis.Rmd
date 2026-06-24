@@ -197,7 +197,7 @@ Figure 6 presents the sensitivity and specificity of each evaluated method acros
 Most models follow the expected pattern in which sensitivity decreases as the decision threshold increases, while specificity increases. The Naïve Baseline, Kernel Regression, SVM variants, VKR NMF, and VKR SVD all exhibit high sensitivity at lower thresholds, followed by a gradual decline as more stringent decision boundaries are applied. By a threshold of 0.5, sensitivity for these models has decreased substantially, whereas specificity exceeds 0.99, indicating a strong ability to avoid false positive predictions.
 In contrast, VKR Weighted NMF displays a markedly different behaviour. Across the entire threshold range, it maintains substantially higher sensitivity than the remaining methods, achieving 0.976 at a threshold of 0.1 and remaining at 0.918 even at a threshold of 0.9. This high sensitivity is accompanied by comparatively lower specificity, which increases from 0.287 at threshold 0.1 to 0.763 at threshold 0.9. The heatmaps therefore demonstrate the distinct operating characteristics of VKR Weighted NMF relative to the other evaluated approaches.
 
-```{r fig-heatmap, echo=FALSE, fig.cap="Sensitivity and specificity heatmaps across all methods and decision thresholds (0.1–0.9). Green indicates higher values, whereas red indicates lower values.", out.width="70%", fig.align="center"}
+```{r fig-heatmap, echo=FALSE, fig.cap="Sensitivity and specificity heatmaps across all methods and decision thresholds (0.1–0.9). Green indicates higher values, whereas red indicates lower values.", out.width="100%", fig.align="center"}
 knitr::include_graphics("figures/heatmap.png")
 ```
 
