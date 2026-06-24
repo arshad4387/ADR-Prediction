@@ -163,24 +163,6 @@ statistical challenges:
   (negative) class.
 \end{enumerate}
 
-The Area Under the Receiver Operating Characteristic curve (AUROC) is a
-widely used metric that quantifies a classifier's ability to
-discriminate between positive and negative classes across all
-classification thresholds, calculated as the area under the curve
-plotting the true positive rate (sensitivity) against the false positive
-rate (1 - specificity). However, the ADR dataset possess a highly
-imbalanced classes where positive cases are rare relative to the
-negative cases.
-
-The Area Under the Precision Recall Curve (AUPR) plots, precision (the
-proportion of predicted positives that are true positives) against
-recall (the proportion of actual positives correctly identified) across
-all thresholds. Since precision is sensitive to number of false
-positives, AUPR provides a more informative and discriminative
-assessment of the model performance. So, both AUPR and AUROC has been
-evaluated for all the models. In this study, AUPR is used as the main
-evaluation metric, while AUROC is reported as a secondary measure.
-
 Early methodologies primarily relied on chemical substructures mapped
 via Ordinary Canonical Correlation Analysis (OCCA) (Pauwels et al. 2011)
 or multiple kernel regression frameworks to integrate chemical
@@ -206,13 +188,18 @@ confidence metrics to individual entries, optimizing the reconstruction
 process for drug-gene interaction (DGI) profiles and chemical
 fingerprints.
 
-Furthermore, we expand the original data scope by 25\%, integrating the
-latest records from the SIDER and DGIdb databases to encompass a cohort
-of 973 drugs, thereby allowing us to rigorously validate the scalability
-and predictive precision of the Weighted NMF framework.
+Furthermore, we expand the baseline dataset by approximately 25\%
+relative to the original study by compiling and reconciling the most
+recent data releases from the SIDER and Drug-Gene Interaction Database
+(DGIdb), establishing a comprehensive study cohort of 973 unique drug
+compounds. In addition, an interactive application was developed that
+allows users to query a given drug name and retrieve its associated
+predicted adverse effects, demonstrating the practical applicability of
+the proposed framework in a real world, user facing context.
 
 In the remainder of this paper, Section 2 describes the datasets,
-Section 3 methods, followed by results and discussions.
+Section 3 methods, followed by results and discussions in sections 4 and
+5, respectively.
 
 \section{Data}\label{data}
 
@@ -260,15 +247,8 @@ Chemical Fingerprints & 973 × 1,024 \\
 Side Effect Matrix & 973 × 5779 \\
 \end{longtable}
 
-\subsection{Class Imbalance in the
-dataset}\label{class-imbalance-in-the-dataset}
-
 The drug side effect matrix is highly sparse, with a positive rate well
-below 10\% for most side effects. This severe class imbalance motivates
-the use of AUPR as a primary evaluation metric alongside AUROC, since
-AUROC can appear inflated in imbalanced settings. In the entire dataset,
-about 97\% of the data represents the negative class and remaining as
-positive class
+below 10\% for most side effects.
 
 \section{Methods}\label{methods}
 
@@ -360,15 +340,27 @@ introduced to increase
 
 \section{Results}\label{results}
 
-Exploratory data analysis (EDA) was performed on the dataset to
-characterise key structural properties of the ADR data. Figure 1
-presents the drugs associated with the largest number of reported side
-effects. The results indicate that a relatively small number of ADRs
-account for a substantial proportion of all reported events, reflecting
-a highly skewed distribution of side effects. The drugs exhibiting the
-highest side-effect counts predominantly act on the central nervous
-system (CNS), which likely accounts for their disproportionately large
-number of associated adverse reactions.
+Exploratory data analysis (EDA) was performed to characterize the
+primary structural and distribution properties of the adverse drug
+reaction (ADR) dataset. Figure 1 provides an overview of the data
+landscape, partitioned by individual drug burdens and clinical symptom
+prevalence. Specifically, Figure 1(a) outlines the cohort of drugs
+associated with the highest cumulative number of distinct side effects.
+A substantial proportion of these top tier drugs including Pregabalin,
+Aripiprazole, and Citalopram predominantly target the central nervous
+system (CNS), a therapeutic class inherently prone to systemic and broad
+spectrum adverse reactions due to complex neuromodulatory pathways.
+
+Complementing this, Figure 1(b) illustrates the overall frequency of
+specific clinical symptoms across the entire drug library, measured by
+the absolute number of unique compounds that trigger them. The
+distribution reveals a highly concentrated subset of traditional
+physiological distress markers such as nausea, headache, and vomiting
+accounts for a disproportionate majority of all recorded events in the
+database. Taken together, these dual distributions highlight the severe
+class imbalance and density variations inherent to post market ADR
+profiles, establishing a critical baseline justification for the robust
+mathematical matrix factorization techniques implemented in this study.
 
 \begin{figure}[H]
 
@@ -376,7 +368,7 @@ number of associated adverse reactions.
 
 }
 
-\caption{Drugs with most number of side effects and most frequent side effects\label{fig:fig-most-common-drug}}\label{fig:fig-most-common-drug}
+\caption{Exploratory data analysis of the drug-ADR landscape. (a) Identification of the fifteen high-density drugs associated with the greatest volume of unique side effects. (b) Frequency ranking of the most pervasive clinical symptoms observed across the entire compound library.\label{fig:fig-most-common-drug}}\label{fig:fig-most-common-drug}
 \end{figure}
 
 Figure 2 illustrates the distribution of the number of side effects
