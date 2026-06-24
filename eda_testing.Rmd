@@ -1,0 +1,713 @@
+---
+title: "EDA New Data"
+author: "Arshad Ahamed Shajahan / 25242322"
+date: "2026-04-08"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r}
+dgi <- read.csv('New Data/New Drug Gene Interactions csv.csv',row.names = 1)
+drug_se <- read.csv('New Data/Drug and Side Effects csv.csv')
+drug_cf <- read.csv('New Data/Chemical Fingerprint New Drugs csv.csv', row.names = 1)
+```
+
+```{r}
+library(tidyverse)
+library(pheatmap)
+library(igraph)
+library(ggraph)
+library(UpSetR)
+library(vegan)      # rarefaction
+library(patchwork)
+
+# ── 1a. Side-effect co-occurrence heatmap (top 30 SEs) ──────────────────────
+top_se <- drug_se %>%
+  count(side_effect_name, sort = TRUE) %>%
+  slice_head(n = 30) %>%
+  pull(side_effect_name)
+
+se_mat <- drug_se %>%
+  filter(side_effect_name %in% top_se) %>%
+  select(drugbank_name, side_effect_name) %>%
+  distinct() %>%
+  mutate(present = 1) %>%
+  pivot_wider(names_from = side_effect_name, values_from = present, values_fill = 0) %>%
+  column_to_rownames("drugbank_name") %>%
+  as.matrix()
+
+# Co-occurrence = how often two SEs appear together across drugs
+cooc <- t(se_mat) %*% se_mat
+diag(cooc) <- 0  # remove self-pairs
+
+pheatmap(cooc,
+         color = colorRampPalette(c("#f7fbff","#c6dbef","#6baed6","#08519c"))(100),
+         main = "Side-Effect Co-occurrence (top 30)",
+         fontsize = 7,
+         border_color = NA,
+         treeheight_row = 20, treeheight_col = 20)
+
+
+# ── 1b. UpSet plot — top SE combinations ────────────────────────────────────
+# Show which drugs share combinations of the top 8 most common SEs
+top8_se <- drug_se %>%
+  count(side_effect_name, sort = TRUE) %>%
+  slice_head(n = 8) %>%
+  pull(side_effect_name)
+
+upset_input <- drug_se %>%
+  filter(side_effect_name %in% top8_se) %>%
+  select(drugbank_name, side_effect_name) %>%
+  distinct() %>%
+  mutate(present = 1) %>%
+  pivot_wider(names_from = side_effect_name, values_from = present, values_fill = 0) %>%
+  column_to_rownames("drugbank_name") %>%
+  as.data.frame()
+
+upset(upset_input,
+      sets = top8_se,
+      order.by = "freq",
+      nsets = 8,
+      mainbar.y.label = "Drug Count",
+      sets.x.label = "Drugs with SE",
+      text.scale = 1.2)
+
+
+# ── 1c. Rarefaction curve — how many unique SEs are "discovered" per drug ──
+# Treats each drug as a sampling unit; SEs as species
+se_wide <- drug_se %>%
+  select(drugbank_name, side_effect_name) %>%
+  distinct() %>%
+  mutate(n = 1) %>%
+  pivot_wider(names_from = side_effect_name, values_from = n, values_fill = 0) %>%
+  column_to_rownames("drugbank_name")
+
+rarecurve(se_wide, step = 5, xlab = "Number of Drugs Sampled",
+          ylab = "Unique Side Effects", main = "SE Discovery Rarefaction Curve",
+          col = "#3182bd", lwd = 1.2, label = FALSE)
+
+
+# ── 1d. Drug–SE bipartite network (top 20 drugs by burden) ──────────────────
+top20_drugs <- drug_se %>%
+  count(drugbank_name, sort = TRUE) %>%
+  slice_head(n = 20) %>%
+  pull(drugbank_name)
+
+top10_se_for_net <- drug_se %>%
+  filter(drugbank_name %in% top20_drugs) %>%
+  count(side_effect_name, sort = TRUE) %>%
+  slice_head(n = 15) %>%
+  pull(side_effect_name)
+
+edges_bipartite <- drug_se %>%
+  filter(drugbank_name %in% top20_drugs, side_effect_name %in% top10_se_for_net) %>%
+  select(from = drugbank_name, to = side_effect_name) %>%
+  distinct()
+
+g_bip <- graph_from_data_frame(edges_bipartite, directed = FALSE)
+V(g_bip)$type <- V(g_bip)$name %in% top20_drugs  # TRUE = drug, FALSE = SE
+
+ggraph(g_bip, layout = "bipartite") +
+  geom_edge_link(alpha = 0.25, color = "grey60") +
+  geom_node_point(aes(color = type, size = type)) +
+  geom_node_text(aes(label = name, color = type), size = 2.5, repel = TRUE) +
+  scale_color_manual(values = c(`TRUE` = "#440154FF", `FALSE` = "#31688EFF"),
+                     labels = c("Side Effect", "Drug")) +
+  scale_size_manual(values = c(`TRUE` = 4, `FALSE` = 2.5), guide = "none") +
+  labs(title = "Drug–Side Effect Bipartite Network",
+       subtitle = "Top 20 drugs × top 15 side effects",
+       color = NULL) +
+  theme_graph(base_family = "sans") +
+  theme(legend.position = "bottom")
+
+
+# ── 1e. Side-effect prevalence CDF ─────────────────────────────────────────
+se_drug_counts <- drug_se %>%
+  count(side_effect_name, sort = TRUE)
+
+ggplot(se_drug_counts, aes(x = n)) +
+  stat_ecdf(geom = "step", color = "#3182bd", linewidth = 1) +
+  scale_x_log10() +
+  labs(title = "CDF of Side-Effect Prevalence",
+       subtitle = "x-axis: number of drugs reporting each SE (log scale)",
+       x = "Number of Drugs", y = "Cumulative proportion of side effects") +
+  theme_minimal()
+```
+
+```{r}
+# ── 2a. Distribution of genes per drug and drugs per gene ───────────────────
+genes_per_drug <- dgi %>%
+  rownames_to_column("drug") %>%
+  pivot_longer(-drug, names_to = "gene", values_to = "val") %>%
+  filter(val != 0) %>%
+  count(drug, name = "n_genes")
+
+drugs_per_gene <- dgi %>%
+  rownames_to_column("drug") %>%
+  pivot_longer(-drug, names_to = "gene", values_to = "val") %>%
+  filter(val != 0) %>%
+  count(gene, name = "n_drugs")
+
+p1 <- ggplot(genes_per_drug, aes(x = n_genes)) +
+  geom_histogram(binwidth = 1, fill = "#1D9E75", color = "white") +
+  labs(title = "Genes per Drug", x = "# Genes", y = "# Drugs") +
+  theme_minimal()
+
+p2 <- ggplot(drugs_per_gene, aes(x = n_drugs)) +
+  geom_histogram(binwidth = 1, fill = "#0F6E56", color = "white") +
+  labs(title = "Drugs per Gene", x = "# Drugs", y = "# Genes") +
+  theme_minimal()
+
+p1 + p2 + plot_annotation(title = "Drug-Gene Interaction Degree Distributions")
+
+
+# ── 2b. Top 20 hub genes (most drugs) ───────────────────────────────────────
+top_genes <- drugs_per_gene %>%
+  slice_max(n_drugs, n = 20)
+
+ggplot(top_genes, aes(x = reorder(gene, n_drugs), y = n_drugs)) +
+  geom_col(fill = "#085041") +
+  coord_flip() +
+  labs(title = "Top 20 Hub Genes",
+       subtitle = "Genes interacting with the most drugs",
+       x = "Gene", y = "Number of Drugs") +
+  theme_minimal()
+
+
+# ── 2c. Drug–gene interaction network (top hub genes) ───────────────────────
+top15_genes <- top_genes %>% slice_head(n = 15) %>% pull(gene)
+
+edges_dgi <- dgi %>%
+  rownames_to_column("drug") %>%
+  pivot_longer(-drug, names_to = "gene", values_to = "val") %>%
+  filter(val != 0, gene %in% top15_genes) %>%
+  select(from = drug, to = gene)
+
+g_dgi <- graph_from_data_frame(edges_dgi, directed = FALSE)
+V(g_dgi)$node_type <- ifelse(V(g_dgi)$name %in% top15_genes, "Gene", "Drug")
+
+ggraph(g_dgi, layout = "fr") +
+  geom_edge_link(alpha = 0.15, color = "grey70") +
+  geom_node_point(aes(color = node_type,
+                      size = ifelse(node_type == "Gene", degree(g_dgi), 2))) +
+  geom_node_text(aes(label = ifelse(node_type == "Gene", name, ""),
+                     color = node_type), size = 3, repel = TRUE) +
+  scale_color_manual(values = c("Gene" = "#E8593C", "Drug" = "#3B8BD4")) +
+  scale_size_continuous(range = c(2, 8), guide = "none") +
+  labs(title = "Drug–Gene Interaction Network",
+       subtitle = "Nodes sized by degree; only gene labels shown",
+       color = NULL) +
+  theme_graph() +
+  theme(legend.position = "bottom")
+
+
+# ── 2d. Drug similarity by shared genes (Jaccard) ───────────────────────────
+gene_mat <- dgi %>% as.matrix()
+gene_mat[gene_mat != 0] <- 1  # binarise
+
+gene_intersect <- gene_mat %*% t(gene_mat)
+gene_counts    <- rowSums(gene_mat)
+gene_union     <- outer(gene_counts, gene_counts, "+") - gene_intersect
+gene_jaccard   <- gene_intersect / gene_union
+gene_jaccard[is.na(gene_jaccard)] <- 0
+
+pheatmap(gene_jaccard,
+         color = colorRampPalette(c("#ffffff","#c7e9c0","#41ab5d","#005a32"))(100),
+         main = "Drug Similarity by Shared Genes (Jaccard)",
+         show_rownames = nrow(gene_jaccard) < 50,
+         show_colnames = nrow(gene_jaccard) < 50,
+         fontsize = 6, border_color = NA,
+         treeheight_row = 25, treeheight_col = 25)
+
+```
+
+```{r}
+library(Rtsne)
+library(factoextra)
+
+# ── 3a. Fingerprint bit frequency (how often each bit is active) ─────────────
+bit_freq <- colMeans(drug_cf)
+
+tibble(bit = names(bit_freq), freq = bit_freq) %>%
+  ggplot(aes(x = freq)) +
+  geom_histogram(bins = 50, fill = "#534AB7", color = "white") +
+  labs(title = "Chemical Fingerprint Bit Frequency Distribution",
+       subtitle = "Each bar = one bit position; x = fraction of drugs where bit is active",
+       x = "Activation frequency", y = "Number of bits") +
+  theme_minimal()
+
+# Bits that are always 0 or always 1 carry no information — flag them
+zero_var_bits <- names(bit_freq[bit_freq == 0 | bit_freq == 1])
+cat("Zero-variance bits (to exclude from modelling):", length(zero_var_bits), "\n")
+cf_filtered <- drug_cf[, !colnames(drug_cf) %in% zero_var_bits]
+
+
+# ── 3b. PCA of chemical space ────────────────────────────────────────────────
+pca_res <- prcomp(cf_filtered, center = TRUE, scale. = FALSE)
+
+fviz_eig(pca_res, ncp = 20, addlabels = TRUE,
+         barfill = "#AFA9EC", barcolor = "white",
+         title = "PCA Scree Plot — Chemical Fingerprints")
+
+pca_df <- as.data.frame(pca_res$x[, 1:2]) %>%
+  rownames_to_column("drug")
+
+# Colour by number of side effects
+pca_df <- pca_df %>%
+  left_join(drug_se %>% count(drugbank_name, name = "n_se"),
+            by = c("drug" = "drugbank_name"))
+
+ggplot(pca_df, aes(PC1, PC2, color = n_se)) +
+  geom_point(size = 2.5, alpha = 0.8) +
+  scale_color_viridis_c(option = "C", name = "# Side effects") +
+  labs(title = "Chemical Space PCA",
+       subtitle = "Drugs coloured by number of adverse drug reactions") +
+  theme_minimal()
+
+
+# ── 3c. t-SNE of chemical fingerprints ──────────────────────────────────────
+set.seed(42)
+tsne_res <- Rtsne(cf_filtered, dims = 2, perplexity = 30,
+                  max_iter = 1000, check_duplicates = FALSE)
+
+tsne_df <- as.data.frame(tsne_res$Y) %>%
+  setNames(c("tSNE1", "tSNE2")) %>%
+  mutate(drug = rownames(cf_filtered)) %>%
+  left_join(drug_se %>% count(drugbank_name, name = "n_se"),
+            by = c("drug" = "drugbank_name"))
+
+ggplot(tsne_df, aes(tSNE1, tSNE2, color = n_se)) +
+  geom_point(size = 2.5, alpha = 0.8) +
+  scale_color_viridis_c(option = "B", name = "# Side effects") +
+  labs(title = "t-SNE of Chemical Fingerprints",
+       subtitle = "Coloured by ADR burden") +
+  theme_minimal()
+
+
+# ── 3d. Tanimoto (chemical similarity) heatmap ──────────────────────────────
+cf_mat <- as.matrix(cf_filtered)
+# Tanimoto = intersection / union for binary vectors
+tanm <- tcrossprod(cf_mat)                         # dot product = intersection
+bit_sums <- rowSums(cf_mat)
+tanm_denom <- outer(bit_sums, bit_sums, "+") - tanm
+tanimoto <- tanm / tanm_denom
+tanimoto[is.na(tanimoto)] <- 0
+
+pheatmap(tanimoto,
+         color = colorRampPalette(c("#fff7fb","#d0d1e6","#74a9cf","#023858"))(100),
+         main = "Tanimoto Chemical Similarity Heatmap",
+         show_rownames = FALSE, show_colnames = FALSE,
+         border_color = NA,
+         treeheight_row = 25, treeheight_col = 25)
+
+```
+
+
+
+
+```{r}
+library(corrplot)
+
+# ── 4a. SE burden vs gene count (scatter) ───────────────────────────────────
+common_drugs <- Reduce(intersect, list(
+  rownames(dgi), rownames(drug_cf),
+  unique(drug_se$drugbank_name)
+))
+cat("Drugs present in all three datasets:", length(common_drugs), "\n")
+
+se_burden   <- drug_se %>% count(drugbank_name, name = "n_se") %>%
+               filter(drugbank_name %in% common_drugs)
+gene_burden <- genes_per_drug %>%
+               filter(drug %in% common_drugs) %>%
+               rename(drugbank_name = drug)
+
+merged <- se_burden %>%
+  left_join(gene_burden, by = "drugbank_name") %>%
+  replace_na(list(n_genes = 0))
+
+# ggplot(merged, aes(x = n_genes, y = n_se)) +
+#   geom_point(alpha = 0.6, color = "#3182bd", size = 2.5) +
+#   geom_smooth(method = "lm", color = "#E8593C", se = TRUE) +
+#   labs(title = "Gene Interaction Count vs ADR Burden",
+#        subtitle = paste("Pearson r =",
+#                         round(cor(merged$n_genes, merged$n_se,
+#                                   use = "complete.obs"), 3)),
+#        x = "Number of gene interactions", y = "Number of side effects") +
+#   theme_minimal()
+
+
+# ── 4b. PCA coloured by gene count ──────────────────────────────────────────
+pca_df2 <- pca_df %>%
+  left_join(gene_burden, by = c("drug" = "drugbank_name")) %>%
+  replace_na(list(n_genes = 0)) %>%
+  filter(drug %in% common_drugs)
+
+# ggplot(pca_df2, aes(PC1, PC2, color = n_genes)) +
+#   geom_point(size = 2.5, alpha = 0.8) +
+#   scale_color_viridis_c(option = "D", name = "# Gene interactions") +
+#   labs(title = "Chemical Space PCA — Coloured by Gene Interaction Count") +
+#   theme_minimal()
+
+
+# ── 4c. Mutual information: fingerprint bits vs high-SE burden ───────────────
+# Flag drugs with ADR burden above the 75th percentile
+se_q75 <- quantile(merged$n_se, 0.75, na.rm = TRUE)
+high_adr <- merged %>% mutate(high_adr = as.integer(n_se >= se_q75)) %>%
+            select(drugbank_name, high_adr)
+
+cf_common <- cf_filtered[common_drugs, ]
+high_adr_vec <- high_adr %>%
+  filter(drugbank_name %in% common_drugs) %>%
+  arrange(match(drugbank_name, rownames(cf_common))) %>%
+  pull(high_adr)
+
+# Point-biserial correlation between each bit and high-ADR flag
+bit_cors <- apply(cf_common, 2, function(bit) {
+  cor(bit, high_adr_vec, method = "pearson")
+})
+
+top_bits <- sort(abs(bit_cors), decreasing = TRUE)[1:30]
+
+tibble(bit  = names(top_bits),
+       corr = bit_cors[names(top_bits)]) %>%
+  ggplot(aes(x = reorder(bit, corr), y = corr,
+             fill = corr > 0)) +
+  geom_col() +
+  coord_flip() +
+  scale_fill_manual(values = c(`TRUE` = "#E8593C", `FALSE` = "#3B8BD4"),
+                    labels = c("Negative", "Positive")) +
+  labs(title = "Fingerprint Bits Most Correlated with High ADR Burden",
+       subtitle = "Top 30 bits by absolute point-biserial correlation",
+       x = "Fingerprint bit", y = "Correlation with high-ADR flag",
+       fill = "Direction") +
+  theme_minimal()
+
+
+# ── 4d. Gene enrichment in high-ADR vs low-ADR drugs ────────────────────────
+gene_long <- dgi %>%
+  rownames_to_column("drug") %>%
+  pivot_longer(-drug, names_to = "gene", values_to = "val") %>%
+  filter(val != 0, drug %in% common_drugs) %>%
+  left_join(high_adr, by = c("drug" = "drugbank_name"))
+
+gene_enrichment <- gene_long %>%
+  group_by(gene) %>%
+  summarise(
+    high_adr_rate = mean(high_adr, na.rm = TRUE),
+    n_drugs = n(),
+    .groups = "drop"
+  ) %>%
+  filter(n_drugs >= 5) %>%         # minimum support
+  arrange(desc(high_adr_rate))
+
+top_enriched <- bind_rows(
+  slice_head(gene_enrichment, n = 10),
+  slice_tail(gene_enrichment, n = 10)
+)
+
+ggplot(top_enriched, aes(x = reorder(gene, high_adr_rate),
+                          y = high_adr_rate,
+                          fill = high_adr_rate > 0.5)) +
+  geom_col() +
+  coord_flip() +
+  scale_fill_manual(values = c(`FALSE` = "#3B8BD4", `TRUE` = "#E8593C"),
+                    labels = c("Low-ADR enriched", "High-ADR enriched")) +
+  labs(title = "Genes Enriched in High vs Low ADR Drugs",
+       subtitle = "Rate = fraction of interacting drugs that are high-ADR",
+       x = "Gene", y = "High-ADR rate", fill = NULL) +
+  theme_minimal()
+
+
+# ── 4e. Correlation matrix: n_se, n_genes, PC1, PC2, Tanimoto mean ──────────
+tanimoto_mean <- rowMeans(tanimoto[common_drugs, common_drugs])
+
+summary_df <- merged %>%
+  left_join(pca_df %>% select(drug, PC1, PC2),
+            by = c("drugbank_name" = "drug")) %>%
+  mutate(tanimoto_mean = tanimoto_mean[drugbank_name]) %>%
+  select(n_se, n_genes, PC1, PC2, tanimoto_mean) %>%
+  na.omit()
+
+corrplot(cor(summary_df), method = "color", type = "upper",
+         addCoef.col = "black", number.cex = 0.8,
+         col = colorRampPalette(c("#023858","#f7f7f7","#7f0000"))(200),
+         tl.col = "black", tl.srt = 45,
+         title = "Correlation: ADR Burden, Genes, Chemical PC, Tanimoto",
+         mar = c(0,0,2,0))
+
+
+# ── 4f. Tripartite network: Drug → Gene, Drug → Side Effect ─────────────────
+# Sample drugs to keep the plot readable
+set.seed(1)
+sample_drugs <- sample(common_drugs, min(30, length(common_drugs)))
+
+edges_gene <- dgi[sample_drugs, ] %>%
+  rownames_to_column("drug") %>%
+  pivot_longer(-drug, names_to = "gene", values_to = "val") %>%
+  filter(val != 0) %>%
+  select(from = drug, to = gene) %>%
+  mutate(edge_type = "drug-gene")
+
+edges_se <- drug_se %>%
+  filter(drugbank_name %in% sample_drugs) %>%
+  group_by(drugbank_name) %>%
+  slice_head(n = 5) %>%   # limit SE edges for clarity
+  ungroup() %>%
+  select(from = drugbank_name, to = side_effect_name) %>%
+  mutate(edge_type = "drug-se")
+
+all_edges <- bind_rows(edges_gene, edges_se)
+g_tri <- graph_from_data_frame(all_edges, directed = FALSE)
+
+node_df <- tibble(name = V(g_tri)$name) %>%
+  mutate(node_type = case_when(
+    name %in% sample_drugs             ~ "Drug",
+    name %in% colnames(dgi)            ~ "Gene",
+    TRUE                               ~ "Side Effect"
+  ))
+
+V(g_tri)$node_type <- node_df$node_type
+
+ggraph(g_tri, layout = "fr") +
+  geom_edge_link(aes(color = edge_type), alpha = 0.2) +
+  geom_node_point(aes(color = node_type, size = node_type)) +
+  geom_node_text(aes(label = ifelse(node_type == "Drug", name, ""),
+                     color = node_type), size = 2, repel = TRUE) +
+  scale_color_manual(
+    values = c("Drug" = "#3B8BD4", "Gene" = "#E8593C", "Side Effect" = "#1D9E75"),
+    aesthetics = c("color", "fill")
+  ) +
+  scale_edge_color_manual(values = c("drug-gene" = "#E8593C66",
+                                      "drug-se"   = "#1D9E7566")) +
+  scale_size_manual(values = c("Drug" = 5, "Gene" = 3, "Side Effect" = 3),
+                    guide = "none") +
+  labs(title = "Tripartite Network: Drug – Gene – Side Effect",
+       subtitle = "Sample of 30 drugs",
+       color = "Node type", edge_color = "Edge type") +
+  theme_graph() +
+  theme(legend.position = "bottom")
+
+
+```
+
+## Old Analysis
+
+```{r}
+# ── Diagnose first ───────────────────────────────────────────────────────────
+threshold <- 30
+
+# Check the actual distribution of max similarities per drug
+max_sim_per_drug <- apply(similarity_matrix, 1, function(x) max(x[x < 100]))
+cat("Drugs with at least one partner >= 85% (excluding self):", 
+    sum(max_sim_per_drug >= threshold), "\n")
+cat("Max similarity found across all pairs:", round(max(max_sim_per_drug), 1), "%\n")
+
+# Quick look at the similarity distribution
+hist(max_sim_per_drug,
+     breaks = 30,
+     main = "Distribution of Max Pairwise Similarity per Drug",
+     xlab = "Max Jaccard Similarity (%) with any other drug",
+     col = "#9ecae1", border = "white")
+abline(v = threshold, col = "red", lwd = 2, lty = 2)
+legend("topright", legend = paste("Threshold =", threshold, "%"),
+       col = "red", lty = 2, lwd = 2)
+
+
+```
+
+
+```{r}
+# ── Auto-select a sensible threshold ────────────────────────────────────────
+# Pick the threshold that gives at least 2 drugs but focuses on the most similar
+find_threshold <- function(sim_mat, min_drugs = 30, target_drugs = 50) {
+  # Try descending thresholds until we get enough drugs
+  for (t in seq(95, 10, by = -5)) {
+    candidates <- rownames(sim_mat)[
+      apply(sim_mat, 1, function(x) any(x >= t & x < 100))
+    ]
+    if (length(candidates) >= min_drugs) {
+      cat("Auto-selected threshold:", t, "% →", length(candidates), "drugs retained\n")
+      return(list(threshold = t, drugs = candidates))
+    }
+  }
+  stop("Cannot find any threshold that retains >= 2 drugs.")
+}
+
+auto <- find_threshold(similarity_matrix)
+threshold   <- auto$threshold
+keep_drugs  <- auto$drugs
+
+
+```
+
+```{r}
+# ── Safe pheatmap with guard ─────────────────────────────────────────────────
+threshold <- 70
+focused_matrix <- similarity_matrix[keep_drugs, keep_drugs]
+
+# Hard stop with a clear message instead of a cryptic hclust error
+if (nrow(focused_matrix) < 2) {
+  stop(paste0(
+    "Only ", nrow(focused_matrix), " drug(s) passed the threshold of ", threshold, "%. ",
+    "Lower the threshold or check that similarity_matrix has non-trivial off-diagonal values."
+  ))
+}
+
+colors     <- colorRampPalette(c("#ffffff","#deebf7","#9ecae1","#3182bd","#08519c"))(100)
+breaks_list <- seq(0, 100, length.out = 101)
+
+# Only cluster rows/cols if there are enough drugs
+do_cluster <- nrow(focused_matrix) >= 3
+
+pheatmap(focused_matrix,
+         cluster_rows    = do_cluster,
+         cluster_cols    = do_cluster,
+         treeheight_row  = ifelse(do_cluster, 30, 0),
+         treeheight_col  = ifelse(do_cluster, 30, 0),
+         show_rownames   = TRUE,
+         show_colnames   = TRUE,
+         fontsize_row    = max(4, min(10, 80 / nrow(focused_matrix))),  # auto font size
+         fontsize_col    = max(4, min(10, 80 / nrow(focused_matrix))),
+         cellwidth       = 7,
+         cellheight      = 7,
+         angle_col       = 45,
+         color           = colors,
+         breaks          = breaks_list,
+         main            = paste("Clustered Drug Similarity (Threshold >=", threshold, "%)"),
+         border_color    = NA,
+         legend_breaks   = c(0, 25, 50, 75, 100),
+         legend_labels   = c("0%", "25%", "50%", "75%", "100% Shared"))
+
+```
+
+```{r}
+binary_df <- drug_se %>%
+  select(drugbank_name, side_effect_name) %>%
+  distinct() %>%
+  mutate(present = 1) %>%
+  pivot_wider(names_from = side_effect_name, values_from = present, values_fill = 0)
+
+# Convert to Matrix
+mat <- as.matrix(binary_df[,-1])
+rownames(mat) <- binary_df$drugbank_name
+
+# Calculate Intersection and Union for all drugs
+intersection_matrix <- mat %*% t(mat)
+side_effect_counts <- diag(intersection_matrix)
+sum_matrix <- outer(side_effect_counts, side_effect_counts, "+")
+union_matrix <- sum_matrix - intersection_matrix
+
+# Calculate % Similarity (Jaccard Index)
+similarity_matrix <- (intersection_matrix / union_matrix) * 100
+similarity_matrix[is.na(similarity_matrix)] <- 0
+
+threshold <- 70
+keep_drugs <- rownames(similarity_matrix)[apply(similarity_matrix, 1, function(x) any(x >= threshold & x < 100))]
+
+# Subset the matrix to only these drugs
+focused_matrix <- similarity_matrix[keep_drugs, keep_drugs]
+
+colors <- colorRampPalette(c("#ffffff", "#deebf7", "#9ecae1", "#3182bd", "#08519c"))(100)
+breaks_list <- seq(0, 100, length.out = 101)
+
+pheatmap(focused_matrix,
+         # Clustering
+         cluster_rows = TRUE,
+         cluster_cols = TRUE,
+         treeheight_row = 30,
+         treeheight_col = 30,
+         show_rownames = TRUE,      
+         show_colnames = TRUE,      
+         fontsize_row = 6,          
+         fontsize_col = 6,          
+         cellwidth = 7,             
+         cellheight = 7,
+         angle_col = 45,            
+         color = colors,
+         breaks = breaks_list,      
+         main = paste("Clustered Drug Similarity (Threshold >=", threshold, "%)"),
+         border_color = NA,         
+         legend_breaks = c(0, 25, 50, 75, 100),
+         legend_labels = c("0%", "25%", "50%", "75%", "100% Shared"))
+```
+
+
+
+
+
+
+
+
+```{r}
+# Distribution of side effects and drugs
+drug_burden <- drug_se %>%
+  count(drugbank_name, sort = TRUE)
+
+ggplot(drug_burden, aes(x = n)) +
+  geom_histogram(binwidth = 5, fill = "orange", color = "white") +
+  labs(title = "Distribution of Side Effects for Drugs", 
+       x = "Number of Side Effects", y = "Number of Drugs") +
+  theme_minimal(base_size = 12) +
+  theme(
+    plot.title = element_text(face = "bold", size = 14),
+    plot.subtitle = element_text(size = 10)
+  )
+```
+
+
+
+```{r}
+
+# Top 15 drugs with most side effects
+top_drugs <- drug_se %>%
+  count(drugbank_name, sort = TRUE) %>%
+  slice_head(n = 15)
+
+plot_drugs <- ggplot(top_drugs, aes(x = reorder(drugbank_name, n), y = n)) +
+  geom_col(fill = "#440154FF") +  # dark purple
+  coord_flip() +
+  labs(
+    title = "Drugs with Highest Side Effects",
+    subtitle = str_wrap("Drugs associated with the greatest number of side effects", width = 30),
+    x = "Drug Name", 
+    y = "Number of Side Effects"
+  ) +
+  theme_minimal(base_size = 12) +
+  theme(
+    plot.title = element_text(face = "bold", size = 14),
+    plot.subtitle = element_text(size = 10)
+  )
+
+# Top 15 most frequent side effects
+top_side_effects <- drug_se %>%
+  count(side_effect_name, sort = TRUE) %>%
+  slice_head(n = 15)
+
+plot_side_effects <- ggplot(top_side_effects, aes(x = reorder(side_effect_name, n), y = n)) +
+  geom_col(fill = "#31688EFF") +  # steel blue
+  coord_flip() +
+  labs(
+    title = str_wrap("Frequent Side Effects",width=30),
+    subtitle = str_wrap("Most pervasive clinical symptoms",width=30),
+    x = "Side Effect", 
+    y = "Frequency (Number of Drugs)"
+  ) +
+  theme_minimal(base_size = 12) +
+  theme(
+    plot.title = element_text(face = "bold", size = 14),
+    plot.subtitle = element_text(size = 10)
+  )
+
+# Combining the plots side by side
+combined_plot <- plot_drugs + plot_side_effects + 
+  plot_layout(ncol = 2) +
+  plot_annotation(
+    title = "Drugs and Side Effects Overview",
+    theme = theme(plot.title = element_text(face = "bold", size = 16))
+  )
+combined_plot
+```

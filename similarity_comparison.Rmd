@@ -1,0 +1,297 @@
+---
+title: "EDA"
+author: "Arshad Ahamed Shajahan / 25242322"
+date: "2026-04-15"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+
+dgi <- read.csv('New Data/New Drug Gene Interactions csv.csv',row.names = 1)
+
+dgi_subset <- dgi[1:50, ]
+
+# Convert to matrix
+mat <- as.matrix(dgi_subset[, -1])
+rownames(mat) <- dgi_subset[[1]]
+
+# ── Full n×n Jaccard similarity matrix ──────────────────────────────────────
+n <- nrow(mat)
+sim_matrix <- matrix(0, nrow = n, ncol = n, dimnames = list(rownames(mat), rownames(mat)))
+
+for (i in 1:n) {
+  for (j in 1:n) {
+    common <- sum(mat[i, ] == 1 & mat[j, ] == 1)
+    total  <- sum(mat[i, ] == 1 | mat[j, ] == 1)
+    sim_matrix[i, j] <- if (total == 0) 0 else round((common / total) * 100, 2)
+  }
+}
+
+# ── Extract pairs above threshold ───────────────────────────────────────────
+threshold <- 20   # change as needed
+
+# Only upper triangle to avoid duplicate pairs (Drug A vs B = Drug B vs A)
+pairs <- which(upper.tri(sim_matrix) & sim_matrix >= threshold, arr.ind = TRUE)
+
+similar_pairs <- data.frame(
+  drug_1         = rownames(sim_matrix)[pairs[, 1]],
+  drug_2         = colnames(sim_matrix)[pairs[, 2]],
+  common_genes   = apply(pairs, 1, function(idx) sum(mat[idx[1], ] == 1 & mat[idx[2], ] == 1)),
+  total_genes    = apply(pairs, 1, function(idx) sum(mat[idx[1], ] == 1 | mat[idx[2], ] == 1)),
+  similarity_pct = sim_matrix[pairs]
+) |>
+  arrange(desc(similarity_pct))
+
+# ── View results ─────────────────────────────────────────────────────────────
+print(sim_matrix)        # full matrix
+print(similar_pairs)     # filtered pairs
+```
+
+```{r}
+# Check your column names first to be sure
+# colnames(dgi_subset)
+
+# 1. Update this to the correct column name or index
+# If the names are in the first column, keep [[1]]. 
+# If they are in a column named 'Drug', use dgi_subset$Drug
+drug_names <- dgi_subset[[1]] 
+
+# 2. Convert to matrix, excluding the name column
+# We use -1 to drop the first column from the math
+mat <- as.matrix(dgi_subset[, -1])
+
+# 3. Assign the names to the matrix
+rownames(mat) <- drug_names
+colnames(mat) <- colnames(dgi_subset)[-1] # (Optional: keeps gene names)
+
+# --- Proceed with the math as before ---
+intersection <- mat %*% t(mat)
+row_sums <- rowSums(mat)
+union <- outer(row_sums, row_sums, "+") - intersection
+sim_matrix <- round((intersection / union) * 100, 2)
+sim_matrix[is.nan(sim_matrix)] <- 0
+
+# --- Extract with correct names ---
+pairs_indices <- which(upper.tri(sim_matrix) & sim_matrix >= 20, arr.ind = TRUE)
+
+similar_pairs <- data.frame(
+  drug_1         = rownames(sim_matrix)[pairs_indices[, 1]],
+  drug_2         = colnames(sim_matrix)[pairs_indices[, 2]],
+  similarity_pct = sim_matrix[pairs_indices]
+)
+
+print(head(similar_pairs))
+```
+
+
+```{r}
+dgi
+```
+
+Finalll version 
+
+```{r}
+# Drug similarity based on gene interactions
+
+library(dplyr)
+
+threshold <- 0
+min_genes <- 0
+
+mat <- as.matrix(dgi)
+
+gene_counts <- rowSums(mat == 1)
+mat <- mat[gene_counts >= min_genes, ]
+
+print(paste("Drugs remaining for analysis:", nrow(mat)))
+
+# Intersection Matrix
+intersection <- mat %*% t(mat)
+
+row_sums_vec <- rowSums(mat)
+union <- outer(row_sums_vec, row_sums_vec, "+") - intersection
+
+# Calculate Jaccard Matrix
+sim_matrix <- round((intersection / union) * 100, 2)
+sim_matrix[is.nan(sim_matrix)] <- 0
+
+pairs_indices <- which(upper.tri(sim_matrix) & sim_matrix >= threshold, arr.ind = TRUE)
+
+similar_pairs <- data.frame(
+  drug_1         = rownames(sim_matrix)[pairs_indices[, 1]],
+  drug_2         = colnames(sim_matrix)[pairs_indices[, 2]],
+  genes_drug_1   = row_sums_vec[pairs_indices[, 1]],
+  genes_drug_2   = row_sums_vec[pairs_indices[, 2]],
+  common_genes   = intersection[pairs_indices],
+  similarity_pct = sim_matrix[pairs_indices])
+
+
+similar_pairs <- similar_pairs %>%
+  rowwise() %>%
+  mutate(
+    d1 = min(drug_1, drug_2), 
+    d2 = max(drug_1, drug_2)
+  ) %>%
+  ungroup() %>%
+  select(-drug_1, -drug_2) %>% 
+  rename(drug_1 = d1, drug_2 = d2) %>%
+  relocate(drug_1, drug_2) %>%
+  arrange(desc(similarity_pct))
+
+# View final result
+similar_pairs
+```
+
+
+```{r}
+# Drug similarity based on chemical fingerprints
+
+drug_cf <- read.csv('New Data/Chemical Fingerprint New Drugs csv.csv', row.names = 1)
+
+threshold_cf <- 0
+min_cf <- 0
+
+mat_cf <- as.matrix(drug_cf)
+
+cf_counts <- rowSums(mat_cf == 1)
+mat_cf <- mat_cf[cf_counts >= min_cf, ]
+
+print(paste("Drugs remaining for analysis:", nrow(mat_cf)))
+
+# Intersection Matrix
+intersection_cf <- mat_cf %*% t(mat_cf)
+
+row_sums_vec_cf <- rowSums(mat_cf)
+union_cf <- outer(row_sums_vec_cf, row_sums_vec_cf, "+") - intersection_cf
+
+# Calculate Jaccard Matrix
+sim_matrix_cf <- round((intersection_cf / union_cf) * 100, 2)
+sim_matrix_cf[is.nan(sim_matrix_cf)] <- 0
+
+pairs_indices_cf <- which(upper.tri(sim_matrix_cf) & sim_matrix_cf >= threshold_cf, arr.ind = TRUE)
+
+similar_pairs_cf <- data.frame(
+  drug_1         = rownames(sim_matrix_cf)[pairs_indices_cf[, 1]],
+  drug_2         = colnames(sim_matrix_cf)[pairs_indices_cf[, 2]],
+  cf_drug_1   = row_sums_vec_cf[pairs_indices_cf[, 1]],
+  cf_drug_2   = row_sums_vec_cf[pairs_indices_cf[, 2]],
+  common_cf   = intersection_cf[pairs_indices_cf],
+  similarity_pct_cf = sim_matrix_cf[pairs_indices_cf])
+
+similar_pairs_cf <- similar_pairs_cf %>%
+  rowwise() %>%
+  mutate(
+    d1 = min(drug_1, drug_2), 
+    d2 = max(drug_1, drug_2)
+  ) %>%
+  ungroup() %>%
+  select(-drug_1, -drug_2) %>% 
+  rename(drug_1 = d1, drug_2 = d2) %>%
+  relocate(drug_1, drug_2) %>%
+  arrange(desc(similarity_pct_cf))
+
+similar_pairs_cf
+```
+
+```{r}
+library(dplyr)
+library(tidyr)
+
+drug_se <- read.csv('New Data/Drug and Side Effects csv.csv')
+
+mat_se_raw <- table(drug_se$drugbank_name, drug_se$side_effect_name)
+
+# Convert to binary (0 or 1) matrix
+mat_se <- as.matrix(mat_se_raw > 0) + 0
+
+threshold_se <- 0
+min_se <- 0
+
+se_counts <- rowSums(mat_se)
+mat_se <- mat_se[se_counts >= min_se, ]
+
+print(paste("Drugs remaining for side effect analysis:", nrow(mat_se)))
+
+# Intersection Matrix
+intersection_se <- mat_se %*% t(mat_se)
+
+# Union calculation
+row_sums_se <- rowSums(mat_se)
+union_se <- outer(row_sums_se, row_sums_se, "+") - intersection_se
+
+# Jaccard Matrix
+sim_matrix_se <- round((intersection_se / union_se) * 100, 2)
+sim_matrix_se[is.nan(sim_matrix_se)] <- 0
+
+# Extract pairs
+pairs_se <- which(upper.tri(sim_matrix_se) & sim_matrix_se >= threshold_se, arr.ind = TRUE)
+
+similar_pairs_se <- data.frame(
+  drug_1            = rownames(sim_matrix_se)[pairs_se[, 1]],
+  drug_2            = colnames(sim_matrix_se)[pairs_se[, 2]],
+  se_count_1        = row_sums_se[pairs_se[, 1]],
+  se_count_2        = row_sums_se[pairs_se[, 2]],
+  common_se         = intersection_se[pairs_se],
+  similarity_pct_se = sim_matrix_se[pairs_se])
+
+similar_pairs_se <- similar_pairs_se %>%
+  arrange(desc(similarity_pct_se))
+
+similar_pairs_se
+```
+
+
+```{r}
+
+# Combine everything
+final_report <- similar_pairs %>%
+  inner_join(similar_pairs_cf, by = c("drug_1", "drug_2")) %>%
+  inner_join(similar_pairs_se, by = c("drug_1", "drug_2")) %>%
+  select(
+    drug_1, drug_2,
+    gene_sim = similarity_pct,
+    chem_sim = similarity_pct_cf,
+    se_sim = similarity_pct_se
+  ) %>%
+  arrange(desc(chem_sim)) %>%
+  arrange(desc(gene_sim))
+
+final_report
+```
+
+
+```{r}
+
+```
+
+
+```{r}
+```
+
+
+```{r}
+```
+
+
+```{r}
+```
+
+
+```{r}
+```
+
+
+```{r}
+```
+
+
+```{r}
+```
+
+
+```{r}
+```
