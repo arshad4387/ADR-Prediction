@@ -178,7 +178,8 @@ recall (the proportion of actual positives correctly identified) across
 all thresholds. Since precision is sensitive to number of false
 positives, AUPR provides a more informative and discriminative
 assessment of the model performance. So, both AUPR and AUROC has been
-evaluated for all the models.
+evaluated for all the models. In this study, AUPR is used as the main
+evaluation metric, while AUROC is reported as a secondary measure.
 
 Early methodologies primarily relied on chemical substructures mapped
 via Ordinary Canonical Correlation Analysis (OCCA) (Pauwels et al. 2011)
@@ -701,15 +702,14 @@ is feasible, while also highlighting important challenges in the
 evaluation of ADR prediction models.
 
 A key point from this work is that choosing the right evaluation metric
-is especially important for highly imbalanced biomedical datasets. The
-Area Under the Receiver Operating Characteristic curve (AUROC) is a
-widely used metric that quantifies a classifier's ability to
-discriminate between positive and negative classes across all
+is especially important for highly imbalanced biomedical datasets. This
+is because the dataset contains far more negative drug--reaction pairs
+than positive ones. The Area Under the Receiver Operating Characteristic
+curve (AUROC) is a widely used metric that quantifies a classifier's
+ability to discriminate between positive and negative classes across all
 classification thresholds, calculated as the area under the curve
 plotting the true positive rate (sensitivity) against the false positive
-rate (1 - specificity). However, the ADR dataset possess a highly
-imbalanced classes where positive cases are rare relative to the
-negative cases.
+rate (1 - specificity).
 
 The Area Under the Precision Recall Curve (AUPR) plots, precision (the
 proportion of predicted positives that are true positives) against
@@ -718,18 +718,17 @@ all thresholds. Since precision is sensitive to number of false
 positives, AUPR provides a more informative and discriminative
 assessment of the model performance. So, both AUPR and AUROC has been
 evaluated for all the models. In this study, AUPR is used as the main
-evaluation metric, while AUROC is reported as a secondary measure. This
-is because the dataset contains far more negative drug--reaction pairs
-than positive ones. The Naïve Baseline clearly shows this effect:
-although it achieves an AUROC of over 0.91 without using any meaningful
-drug-specific information, its AUPR is only 0.36, indicating poor
-performance in identifying the rare positive cases. This difference
-suggests that AUROC can sometimes give an overly optimistic impression
-of performance when classes are highly imbalanced, while AUPR provides a
-more realistic view of how well the model performs in practice. This
-finding is consistent with previous work showing that precision--recall
-based evaluation is more appropriate than ROC analysis in imbalanced
-settings (Saito 2015).
+evaluation metric, while AUROC is reported as a secondary measure.
+
+The Naïve Baseline clearly shows this effect: although it achieves an
+AUROC of over 0.91 without using any meaningful drug-specific
+information, its AUPR is only 0.36, indicating poor performance in
+identifying the rare positive cases. This difference suggests that AUROC
+can sometimes give an overly optimistic impression of performance when
+classes are highly imbalanced, while AUPR provides a more realistic view
+of how well the model performs in practice. This finding is consistent
+with previous work showing that precision--recall based evaluation is
+more appropriate than ROC analysis in imbalanced settings (Saito 2015).
 
 The difference between VKR NMF and VKR Weighted NMF reflects the basic
 trade-off between sensitivity and specificity in ADR prediction. In

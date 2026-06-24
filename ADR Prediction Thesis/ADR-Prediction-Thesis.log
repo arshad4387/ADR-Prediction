@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.6.19)  24 JUN 2026 16:53
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.6.19)  24 JUN 2026 16:58
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -605,35 +605,35 @@ File: ts1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 
 
 {/Users/arshad/Library/TinyTeX/texmf-var/fonts/map/pdftex/updmap/pdftex.map}{/Users/arshad/Library/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc}{/Users/arshad/Library/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-ts1.enc}]
-Underfull \vbox (badness 10000) has occurred while \output is active []
+Underfull \vbox (badness 3068) has occurred while \output is active []
 
 [2] [3{/Users/arshad/Library/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-mathit.enc}{/Users/arshad/Library/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-mathsy.enc}{/Users/arshad/Library/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-rm.enc}]
 <figures/common_se.png, id=74, 1405.25pt x 868.24374pt>
 File: figures/common_se.png Graphic file (type png)
 <use figures/common_se.png>
-Package pdftex.def Info: figures/common_se.png  used on input line 374.
+Package pdftex.def Info: figures/common_se.png  used on input line 375.
 (pdftex.def)             Requested size: 328.82706pt x 203.16292pt.
 <figures/distribution_of_se.png, id=76, 1405.25pt x 868.24374pt>
 File: figures/distribution_of_se.png Graphic file (type png)
 <use figures/distribution_of_se.png>
-Package pdftex.def Info: figures/distribution_of_se.png  used on input line 389.
+Package pdftex.def Info: figures/distribution_of_se.png  used on input line 390.
 (pdftex.def)             Requested size: 328.82706pt x 203.16292pt.
 [4{/Users/arshad/Library/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-mathex.enc} <./figures/common_se.png>]
 <figures/drug_similarity.png, id=85, 1405.25pt x 868.24374pt>
 File: figures/drug_similarity.png Graphic file (type png)
 <use figures/drug_similarity.png>
-Package pdftex.def Info: figures/drug_similarity.png  used on input line 409.
+Package pdftex.def Info: figures/drug_similarity.png  used on input line 410.
 (pdftex.def)             Requested size: 328.82706pt x 203.16292pt.
 [5 <./figures/distribution_of_se.png> <./figures/drug_similarity.png>]
 <figures/2b.png, id=94, 1428.33624pt x 1109.14375pt>
 File: figures/2b.png Graphic file (type png)
 <use figures/2b.png>
-Package pdftex.def Info: figures/2b.png  used on input line 452.
+Package pdftex.def Info: figures/2b.png  used on input line 453.
 (pdftex.def)             Requested size: 328.82706pt x 255.33464pt.
 <figures/2a.png, id=95, 642.4803pt x 354.123pt>
 File: figures/2a.png Graphic file (type png)
 <use figures/2a.png>
-Package pdftex.def Info: figures/2a.png  used on input line 468.
+Package pdftex.def Info: figures/2a.png  used on input line 469.
 (pdftex.def)             Requested size: 328.82706pt x 181.24335pt.
 
 Underfull \vbox (badness 10000) has occurred while \output is active []
@@ -642,18 +642,18 @@ Underfull \vbox (badness 10000) has occurred while \output is active []
 <figures/heatmap.png, id=101, 1290.0195pt x 372.1905pt>
 File: figures/heatmap.png Graphic file (type png)
 <use figures/heatmap.png>
-Package pdftex.def Info: figures/heatmap.png  used on input line 498.
+Package pdftex.def Info: figures/heatmap.png  used on input line 499.
 (pdftex.def)             Requested size: 328.82706pt x 94.8704pt.
 [7 <./figures/2a.png> <./figures/heatmap.png>]
 <figures/app1.png, id=113, 1475.5125pt x 793.96625pt>
 File: figures/app1.png Graphic file (type png)
 <use figures/app1.png>
-Package pdftex.def Info: figures/app1.png  used on input line 666.
+Package pdftex.def Info: figures/app1.png  used on input line 667.
 (pdftex.def)             Requested size: 328.82706pt x 176.9386pt.
 <figures/app2.png, id=114, 1475.5125pt x 791.95876pt>
 File: figures/app2.png Graphic file (type png)
 <use figures/app2.png>
-Package pdftex.def Info: figures/app2.png  used on input line 674.
+Package pdftex.def Info: figures/app2.png  used on input line 675.
 (pdftex.def)             Requested size: 328.82706pt x 176.49123pt.
 
 Underfull \vbox (badness 1924) has occurred while \output is active []
@@ -686,7 +686,7 @@ Here is how much of TeX's memory you used:
  14 hyphenation exceptions out of 8191
  74i,12n,79p,1018b,620s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </Users/arshad/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx10.pfb></Users/arshad/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx12.pfb></Users/arshad/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmcsc10.pfb></Users/arshad/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmex10.pfb></Users/arshad/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmmi10.pfb></Users/arshad/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmmi7.pfb></Users/arshad/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr10.pfb></Users/arshad/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr7.pfb></Users/arshad/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr9.pfb></Users/arshad/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmri10.pfb></Users/arshad/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmsy10.pfb></Users/arshad/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmsy5.pfb></Users/arshad/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmsy7.pfb></Users/arshad/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmtt10.pfb></Users/arshad/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb>
-Output written on ADR-Prediction-Thesis.pdf (11 pages, 2677681 bytes).
+Output written on ADR-Prediction-Thesis.pdf (11 pages, 2677637 bytes).
 PDF statistics:
  263 PDF objects out of 1000 (max. 8388607)
  199 compressed objects within 2 object streams
