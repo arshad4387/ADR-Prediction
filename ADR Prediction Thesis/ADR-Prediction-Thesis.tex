@@ -225,12 +225,7 @@ side effects, gene interactions, and chemical fingerprints resulted in
 973 unique data points across the three databases. Table 1 provides an
 overview of the dimensionality of the three databases.
 
-All three datasets were binarised (binary matrices) prior to modelling.
-The DGI and Chemical fingerprints data had all the drugs in the first
-column. Genes and generated fingerprints were presented in each columns
-in the respective datasets.
-
-\begin{longtable}[]{@{}ll@{}}
+\begin{longtable}[]{@{}lc@{}}
 \caption{Summary of dataset dimensions.}\tabularnewline
 \toprule\noalign{}
 Feature Type & Dimensionality \\
@@ -244,11 +239,16 @@ Feature Type & Dimensionality \\
 \endlastfoot
 Drug-Gene Interaction & 973 × 3,647 \\
 Chemical Fingerprints & 973 × 1,024 \\
-Side Effect Matrix & 973 × 5779 \\
+Side Effect Matrix & 973 × 5,779 \\
 \end{longtable}
 
-The drug side effect matrix is highly sparse, with a positive rate well
-below 10\% for most side effects.
+All three datasets were binarised (binary matrices) prior to modelling.
+The DGI and Chemical fingerprints data had all the drugs in the first
+column. Genes and generated fingerprints were presented in each columns
+in the respective datasets. The drug side effect matrix is highly
+sparse, with a positive rate well below 10\% for most side effects. In
+the entire dataset, about 97\% of the data represents the negative class
+and remaining as positive class.
 
 \section{Methods}\label{methods}
 
@@ -413,6 +413,28 @@ Characteristic Curve (AUROC) and the Area Under the Precision--Recall
 Curve (AUPR), with the highest average value for each metric
 highlighted.
 
+\begin{longtable}[]{@{}lll@{}}
+\caption{Predictive performance of all evaluated methods using a single
+75\% training and 25\% testing split (AUROC and AUPR)}\tabularnewline
+\toprule\noalign{}
+Method & Mean AUROC & Mean AUPR \\
+\midrule\noalign{}
+\endfirsthead
+\toprule\noalign{}
+Method & Mean AUROC & Mean AUPR \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Naïve Baseline & 0.9101 ± 0.0024 & 0.3584 ± 0.0075 \\
+Kernel Regression & 0.8745 ± 0.0051 & 0.4155 ± 0.0051 \\
+SVM Linear & 0.7955 ± 0.0097 & 0.3122 ± 0.0124 \\
+SVM RBF & 0.9001 ± 0.0041 & 0.3919 ± 0.0068 \\
+VKR NMF & \textbf{0.9183 ± 0.0027} & 0.4230 ± 0.0033 \\
+VKR Weighted NMF & 0.8551 ± 0.0035 & \textbf{0.5001 ± 0.0022} \\
+VKR SVD & 0.9098 ± 0.0033 & 0.4341 ± 0.0049 \\
+\end{longtable}
+
 Among all evaluated approaches, VKR NMF achieved the highest mean AUROC
 (0.9183 ± 0.0027) together with a mean AUPR of 0.4230 ± 0.0033,
 indicating the strongest overall discrimination between positive and
@@ -449,23 +471,7 @@ imbalanced ADR dataset.
 \caption{ROC Curve for all methods}\label{fig:fig-roc}
 \end{figure}
 
-Figure 5 presents the Receiver Operating Characteristic (ROC) curves for
-all evaluated methods. VKR NMF achieved the strongest overall
-discrimination between positive and negative ADR associations, producing
-the highest AUROC among all evaluated approaches. VKR SVD and the Naïve
-Baseline also demonstrated competitive ROC performance, whereas SVM
-Linear exhibited the weakest discrimination.
-
-\begin{figure}[H]
-
-{\centering \includegraphics[width=0.7\linewidth]{figures/2a} 
-
-}
-
-\caption{Precision Recall Curve}\label{fig:fig-precision-recall}
-\end{figure}
-
-Figure 6 presents the sensitivity and specificity of each evaluated
+Figure 5 presents the sensitivity and specificity of each evaluated
 method across decision thresholds ranging from 0.1 to 0.9. The heatmaps
 illustrate each model's ability to correctly identify true ADR
 associations (sensitivity) while correctly rejecting negative
@@ -493,6 +499,22 @@ VKR Weighted NMF relative to the other evaluated approaches.
 }
 
 \caption{Sensitivity and specificity heatmaps across all methods and decision thresholds (0.1–0.9). Green indicates higher values, whereas red indicates lower values.}\label{fig:fig-heatmap}
+\end{figure}
+
+Figure 6 presents the Receiver Operating Characteristic (ROC) curves for
+all evaluated methods. VKR NMF achieved the strongest overall
+discrimination between positive and negative ADR associations, producing
+the highest AUROC among all evaluated approaches. VKR SVD and the Naïve
+Baseline also demonstrated competitive ROC performance, whereas SVM
+Linear exhibited the weakest discrimination.
+
+\begin{figure}[H]
+
+{\centering \includegraphics[width=0.7\linewidth]{figures/2a} 
+
+}
+
+\caption{Precision Recall Curve}\label{fig:fig-precision-recall}
 \end{figure}
 
 To evaluate the consistency of the results across different data
@@ -523,7 +545,7 @@ F4
 \end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
 F5
 \end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Mean\_SD
+Mean SD
 \end{minipage} \\
 \midrule\noalign{}
 \endfirsthead
@@ -541,7 +563,7 @@ F4
 \end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
 F5
 \end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Mean\_SD
+Mean SD
 \end{minipage} \\
 \midrule\noalign{}
 \endhead
@@ -591,7 +613,7 @@ F4
 \end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
 F5
 \end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Mean\_SD
+Mean SD
 \end{minipage} \\
 \midrule\noalign{}
 \endfirsthead
@@ -609,7 +631,7 @@ F4
 \end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
 F5
 \end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Mean\_SD
+Mean SD
 \end{minipage} \\
 \midrule\noalign{}
 \endhead

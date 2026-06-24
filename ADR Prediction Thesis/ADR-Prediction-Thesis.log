@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.6.19)  24 JUN 2026 19:22
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.6.19)  24 JUN 2026 20:14
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -628,39 +628,45 @@ Package pdftex.def Info: figures/drug_similarity.png  used on input line 402.
 <figures/2b.png, id=90, 1428.33624pt x 1109.14375pt>
 File: figures/2b.png Graphic file (type png)
 <use figures/2b.png>
-Package pdftex.def Info: figures/2b.png  used on input line 445.
+Package pdftex.def Info: figures/2b.png  used on input line 467.
 (pdftex.def)             Requested size: 328.82706pt x 255.33464pt.
-<figures/2a.png, id=91, 642.4803pt x 354.123pt>
-File: figures/2a.png Graphic file (type png)
-<use figures/2a.png>
-Package pdftex.def Info: figures/2a.png  used on input line 461.
-(pdftex.def)             Requested size: 328.82706pt x 181.24335pt.
 
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
 [6 <./figures/2b.png (PNG copy)>]
-<figures/heatmap.png, id=97, 1290.0195pt x 372.1905pt>
+<figures/heatmap.png, id=98, 1290.0195pt x 372.1905pt>
 File: figures/heatmap.png Graphic file (type png)
 <use figures/heatmap.png>
-Package pdftex.def Info: figures/heatmap.png  used on input line 491.
+Package pdftex.def Info: figures/heatmap.png  used on input line 497.
 (pdftex.def)             Requested size: 469.75499pt x 135.5332pt.
-[7 <./figures/2a.png> <./figures/heatmap.png>]
-<figures/app1.png, id=109, 1472.50125pt x 840.13875pt>
+<figures/2a.png, id=99, 642.4803pt x 354.123pt>
+File: figures/2a.png Graphic file (type png)
+<use figures/2a.png>
+Package pdftex.def Info: figures/2a.png  used on input line 513.
+(pdftex.def)             Requested size: 328.82706pt x 181.24335pt.
+[7 <./figures/heatmap.png> <./figures/2a.png>]
+<figures/app1.png, id=109, 1475.5125pt x 793.96625pt>
 File: figures/app1.png Graphic file (type png)
 <use figures/app1.png>
-Package pdftex.def Info: figures/app1.png  used on input line 659.
-(pdftex.def)             Requested size: 328.82706pt x 187.61292pt.
-<figures/app2.png, id=110, 1474.50874pt x 839.135pt>
+Package pdftex.def Info: figures/app1.png  used on input line 681.
+(pdftex.def)             Requested size: 328.82706pt x 176.9386pt.
+<figures/app2.png, id=110, 1475.5125pt x 791.95876pt>
 File: figures/app2.png Graphic file (type png)
 <use figures/app2.png>
-Package pdftex.def Info: figures/app2.png  used on input line 667.
-(pdftex.def)             Requested size: 328.82706pt x 187.13268pt.
-[8 <./figures/app1.png>] [9 <./figures/app2.png>]
+Package pdftex.def Info: figures/app2.png  used on input line 689.
+(pdftex.def)             Requested size: 328.82706pt x 176.49123pt.
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+[8] [9 <./figures/app1.png> <./figures/app2.png>]
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
 [10]
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+[11]
 No file ADR-Prediction-Thesis.bbl.
-[11] (./ADR-Prediction-Thesis.aux)
+[12] (./ADR-Prediction-Thesis.aux)
  ***********
 LaTeX2e <2026-06-01>
 L3 programming layer <2026-05-26>
@@ -675,18 +681,18 @@ Package rerunfilecheck Info: File `ADR-Prediction-Thesis.out' has not changed.
 (rerunfilecheck)             Checksum: CDA56E7076E86C1583130ADCD006B0D2;806.
  ) 
 Here is how much of TeX's memory you used:
- 14529 strings out of 469157
- 238972 string characters out of 5459491
- 702074 words of memory out of 5000000
- 43094 multiletter control sequences out of 15000+600000
- 684090 words of font info for 161 fonts, out of 8000000 for 9000
+ 14541 strings out of 469157
+ 239112 string characters out of 5459491
+ 705124 words of memory out of 5000000
+ 43097 multiletter control sequences out of 15000+600000
+ 684699 words of font info for 165 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
- 74i,11n,79p,1018b,624s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 74i,11n,79p,1018b,586s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </Users/arshad/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx10.pfb></Users/arshad/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx12.pfb></Users/arshad/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmcsc10.pfb></Users/arshad/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmex10.pfb></Users/arshad/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmmi10.pfb></Users/arshad/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmmi7.pfb></Users/arshad/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr10.pfb></Users/arshad/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr7.pfb></Users/arshad/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr9.pfb></Users/arshad/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmri10.pfb></Users/arshad/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmsy10.pfb></Users/arshad/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmsy5.pfb></Users/arshad/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmsy7.pfb></Users/arshad/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmtt10.pfb></Users/arshad/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb>
-Output written on ADR-Prediction-Thesis.pdf (11 pages, 2665777 bytes).
+Output written on ADR-Prediction-Thesis.pdf (12 pages, 2681374 bytes).
 PDF statistics:
- 259 PDF objects out of 1000 (max. 8388607)
- 195 compressed objects within 2 object streams
- 53 named destinations out of 1000 (max. 500000)
- 33377 words of extra memory for PDF output out of 35830 (max. 10000000)
+ 269 PDF objects out of 1000 (max. 8388607)
+ 202 compressed objects within 3 object streams
+ 55 named destinations out of 1000 (max. 500000)
+ 35425 words of extra memory for PDF output out of 35830 (max. 10000000)
 

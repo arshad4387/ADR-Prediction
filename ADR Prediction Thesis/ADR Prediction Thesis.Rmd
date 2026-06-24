@@ -58,17 +58,22 @@ Additionally, the Drug–Gene Interaction Database (DGIdb 4.0) was used to obtai
 
 PubChem, a freely accessible chemical database maintained by the National Center for Biotechnology Information (NCBI), was used to retrieve drug chemical structure fingerprints. Mapping the drug names to side effects, gene interactions, and chemical fingerprints resulted in 973 unique data points across the three databases. Table 1 provides an overview of the dimensionality of the three databases.
 
+```{r dataset-dimensions, echo=FALSE}
+dataset_dims <- data.frame(
+  `Feature Type` = c("Drug-Gene Interaction", "Chemical Fingerprints", "Side Effect Matrix"),
+  `Dimensionality` = c("973 × 3,647", "973 × 1,024", "973 × 5,779"),
+  check.names = FALSE
+)
+
+knitr::kable(
+  dataset_dims,
+  caption = "Summary of dataset dimensions.",
+  align = "lc"
+)
+```
+
 All three datasets were binarised (binary matrices) prior to modelling. The DGI and Chemical fingerprints data had all the drugs in the first column. Genes and generated fingerprints were presented in each columns in the respective datasets.
-
-| Feature Type          | Dimensionality |
-|-----------------------|---------------|
-| Drug-Gene Interaction | 973 × 3,647   |
-| Chemical Fingerprints | 973 × 1,024   |
-| Side Effect Matrix    | 973 × 5779    |
-
-Table: Summary of dataset dimensions.
-
-The drug side effect matrix is highly sparse, with a positive rate well below 10% for most side effects.
+The drug side effect matrix is highly sparse, with a positive rate well below 10% for most side effects. In the entire dataset, about 97% of the data represents the negative class and remaining as positive class.
 
 # Methods
 
@@ -133,7 +138,7 @@ knitr::include_graphics("figures/drug_similarity.png")
 
 Table 2 summarises the predictive performance of all evaluated methods using a single random 75% training and 25% testing split. Performance is reported in terms of the Area Under the Receiver Operating Characteristic Curve (AUROC) and the Area Under the Precision–Recall Curve (AUPR), with the highest average value for each metric highlighted.
 
-```{r, echo=FALSE, include=FALSE, warning=FALSE, message=FALSE}
+```{r, echo=FALSE, include=TRUE, warning=FALSE, message=FALSE}
 library(knitr)
 
 results_summary <- data.frame(
@@ -171,7 +176,8 @@ results_summary <- data.frame(
 kable(
   results_summary,
   caption = "Predictive performance of all evaluated methods using a single 75% training and 25% testing split (AUROC and AUPR)",
-  caption.placement = "Bottom"
+  caption.placement = "Bottom",
+  col.names = c("Method", "Mean AUROC", "Mean AUPR")
 )
 ```
 
@@ -183,17 +189,18 @@ Figure 4 presents the variation of precision, recall, and F1 score for the VKR N
 knitr::include_graphics("figures/2b.png")
 ```
 
-Figure 5 presents the Receiver Operating Characteristic (ROC) curves for all evaluated methods. VKR NMF achieved the strongest overall discrimination between positive and negative ADR associations, producing the highest AUROC among all evaluated approaches. VKR SVD and the Naïve Baseline also demonstrated competitive ROC performance, whereas SVM Linear exhibited the weakest discrimination.
-```{r fig-precision-recall, echo=FALSE, fig.cap="Precision Recall Curve", out.width="70%", fig.align="center"}
-knitr::include_graphics("figures/2a.png")
-```
-
-Figure 6 presents the sensitivity and specificity of each evaluated method across decision thresholds ranging from 0.1 to 0.9. The heatmaps illustrate each model's ability to correctly identify true ADR associations (sensitivity) while correctly rejecting negative associations (specificity).
+Figure 5 presents the sensitivity and specificity of each evaluated method across decision thresholds ranging from 0.1 to 0.9. The heatmaps illustrate each model's ability to correctly identify true ADR associations (sensitivity) while correctly rejecting negative associations (specificity).
 Most models follow the expected pattern in which sensitivity decreases as the decision threshold increases, while specificity increases. The Naïve Baseline, Kernel Regression, SVM variants, VKR NMF, and VKR SVD all exhibit high sensitivity at lower thresholds, followed by a gradual decline as more stringent decision boundaries are applied. By a threshold of 0.5, sensitivity for these models has decreased substantially, whereas specificity exceeds 0.99, indicating a strong ability to avoid false positive predictions.
 In contrast, VKR Weighted NMF displays a markedly different behaviour. Across the entire threshold range, it maintains substantially higher sensitivity than the remaining methods, achieving 0.976 at a threshold of 0.1 and remaining at 0.918 even at a threshold of 0.9. This high sensitivity is accompanied by comparatively lower specificity, which increases from 0.287 at threshold 0.1 to 0.763 at threshold 0.9. The heatmaps therefore demonstrate the distinct operating characteristics of VKR Weighted NMF relative to the other evaluated approaches.
 
 ```{r fig-heatmap, echo=FALSE, fig.cap="Sensitivity and specificity heatmaps across all methods and decision thresholds (0.1–0.9). Green indicates higher values, whereas red indicates lower values.", out.width="100%", fig.align="center"}
 knitr::include_graphics("figures/heatmap.png")
+```
+
+Figure 6 presents the Receiver Operating Characteristic (ROC) curves for all evaluated methods. VKR NMF achieved the strongest overall discrimination between positive and negative ADR associations, producing the highest AUROC among all evaluated approaches. VKR SVD and the Naïve Baseline also demonstrated competitive ROC performance, whereas SVM Linear exhibited the weakest discrimination.
+
+```{r fig-precision-recall, echo=FALSE, fig.cap="Precision Recall Curve", out.width="70%", fig.align="center"}
+knitr::include_graphics("figures/2a.png")
 ```
 
 To evaluate the consistency of the results across different data partitions, an additional five-fold cross-validation was conducted independently of the hold-out evaluation
@@ -228,7 +235,9 @@ auroc_full <- data.frame(
   )
 )
 
-kable(auroc_full, caption = "AUROC scores across five folds with mean ± standard deviation")
+kable(auroc_full, caption = "AUROC scores across five folds with mean ± standard deviation",
+      col.names = c("Method", "F1", "F2", "F3", "F4", "F5", "Mean SD")
+      )
 ```
 
 Table 3 presents the five-fold cross-validation results for all evaluated methods, reporting AUROC scores for each fold along with their mean and standard deviation.
@@ -262,7 +271,9 @@ aupr_full <- data.frame(
   )
 )
 
-kable(aupr_full, caption = "AUPR scores across five folds with mean ± standard deviation")
+kable(aupr_full, caption = "AUPR scores across five folds with mean ± standard deviation",
+      col.names = c("Method", "F1", "F2", "F3", "F4", "F5", "Mean SD")
+      )
 ```
 Table 4 presents the five-fold cross-validation results for all evaluated methods, reporting AUPR scores for each fold along with their mean and standard deviation.  
 
