@@ -672,7 +672,7 @@ plot_drugs <- ggplot(top_drugs, aes(x = reorder(drugbank_name, n), y = n)) +
   coord_flip() +
   labs(
     title = "Drugs with Highest Side Effects",
-    subtitle = str_wrap("Drugs associated with the greatest number of side effects", width = 30),
+    subtitle = str_wrap("Drugs associated with the greatest number of side effects", width = 40),
     x = "Drug Name", 
     y = "Number of Side Effects"
   ) +
@@ -681,6 +681,7 @@ plot_drugs <- ggplot(top_drugs, aes(x = reorder(drugbank_name, n), y = n)) +
     plot.title = element_text(face = "bold", size = 14),
     plot.subtitle = element_text(size = 10)
   )
+plot_drugs
 
 # Top 15 most frequent side effects
 top_side_effects <- drug_se %>%
@@ -692,7 +693,7 @@ plot_side_effects <- ggplot(top_side_effects, aes(x = reorder(side_effect_name, 
   coord_flip() +
   labs(
     title = str_wrap("Frequent Side Effects",width=30),
-    subtitle = str_wrap("Most pervasive clinical symptoms",width=30),
+    subtitle = "Most pervasive clinical symptoms",
     x = "Side Effect", 
     y = "Frequency (Number of Drugs)"
   ) +
@@ -701,13 +702,14 @@ plot_side_effects <- ggplot(top_side_effects, aes(x = reorder(side_effect_name, 
     plot.title = element_text(face = "bold", size = 14),
     plot.subtitle = element_text(size = 10)
   )
+plot_side_effects
 
-# Combining the plots side by side
-combined_plot <- plot_drugs + plot_side_effects + 
-  plot_layout(ncol = 2) +
-  plot_annotation(
-    title = "Drugs and Side Effects Overview",
-    theme = theme(plot.title = element_text(face = "bold", size = 16))
-  )
-combined_plot
+# # Combining the plots side by side
+# combined_plot <- plot_drugs + plot_side_effects + 
+#   plot_layout(ncol = 2) +
+#   plot_annotation(
+#     title = "Drugs and Side Effects Overview",
+#     theme = theme(plot.title = element_text(face = "bold", size = 16))
+#   )
+# combined_plot
 ```
