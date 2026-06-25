@@ -117,22 +117,28 @@ The penalty factor of 1:10 is applied, for predicting all true outcomes wrongly.
 
 # Results
 
-Exploratory data analysis (EDA) was performed to characterize the primary structural and distribution properties of the adverse drug reaction (ADR) dataset. Figure 1 provides an overview of the data landscape, partitioned by individual drug burdens and clinical symptom prevalence. Specifically, Figure 1(a) outlines the cohort of drugs associated with the highest cumulative number of distinct side effects. A substantial proportion of these top tier drugs including Pregabalin, Aripiprazole, and Citalopram predominantly target the central nervous system (CNS), a therapeutic class inherently prone to systemic and broad spectrum adverse reactions due to complex neuromodulatory pathways.
+Exploratory data analysis (EDA) was performed to characterize the primary structural and distribution properties of the adverse drug reaction (ADR) dataset. Figure 1 and 2 provides an overview of the data landscape, partitioned by individual drug burdens and clinical symptom prevalence. Specifically, Figure 1 outlines the cohort of drugs associated with the highest cumulative number of distinct side effects. A substantial proportion of these top tier drugs including Pregabalin, Aripiprazole, and Citalopram predominantly target the central nervous system (CNS), a therapeutic class inherently prone to systemic and broad spectrum adverse reactions due to complex neuromodulatory pathways.
 
-Complementing this, Figure 1(b) illustrates the overall frequency of specific clinical symptoms across the entire drug library, measured by the absolute number of unique compounds that trigger them. The distribution reveals a highly concentrated subset of traditional physiological distress markers such as nausea, headache, and vomiting accounts for a disproportionate majority of all recorded events in the database. Taken together, these dual distributions highlight the severe class imbalance and density variations inherent to post market ADR profiles, establishing a critical baseline justification for the robust mathematical matrix factorization techniques implemented in this study.
+```{r fig-most-common-drug-a, echo=FALSE, fig.cap="Identification of drugs associated with the greatest volume of unique side effects.\\label{fig:fig-most-common-drug-a}", out.width="95%", fig.align="center"}
 
-```{r fig-most-common-drug, echo=FALSE, fig.cap="Exploratory data analysis of the drug-ADR landscape. (a) Identification of the fifteen high-density drugs associated with the greatest volume of unique side effects. (b) Frequency ranking of the most pervasive clinical symptoms observed across the entire compound library.\\label{fig:fig-most-common-drug}", out.width="70%", fig.align="center"}
-
-knitr::include_graphics("figures/common_se.png")
+knitr::include_graphics("figures/1a.png")
 ```
-Figure 2 illustrates the distribution of the number of side effects associated with each drug. Several drugs are associated with more than 200 side effects, while a small subset is associated with as many as 800, further underscoring the heterogeneity of side-effect burden across drugs.
-```{r fig-se-distribution, echo=FALSE, fig.cap="Distribution of side effects", out.width="70%", fig.align="center"}
+
+Complementing this, Figure 2 illustrates the overall frequency of specific clinical symptoms across the entire drug library, measured by the absolute number of unique compounds that trigger them. The distribution reveals a highly concentrated subset of traditional physiological distress markers such as nausea, headache, and vomiting accounts for a disproportionate majority of all recorded events in the database. Taken together, these dual distributions highlight the severe class imbalance and density variations inherent to post market ADR profiles, establishing a critical baseline justification for the robust mathematical matrix factorization techniques implemented in this study.
+
+```{r fig-most-common-drug-b, echo=FALSE, fig.cap="Frequency ranking of the most pervasive clinical symptoms observed across the entire compound library.\\label{fig:fig-most-common-drug-b}", out.width="95%", fig.align="center"}
+
+knitr::include_graphics("figures/1b.png")
+```
+
+Figure 3 illustrates the distribution of the number of side effects associated with each drug. Several drugs are associated with more than 200 side effects, while a small subset is associated with as many as 800, further underscoring the heterogeneity of side-effect burden across drugs.
+```{r fig-se-distribution, echo=FALSE, fig.cap="Distribution of side effects", out.width="95%", fig.align="center"}
 
 knitr::include_graphics("figures/distribution_of_se.png")
 ```
-Given that the majority of the proposed models rely on similarity between drug profiles, Figure 3 presents a heatmap illustrating drug similarity based on shared side-effect profiles. Distinct clustering patterns are observed, suggesting that subsets of drugs share similar adverse reaction profiles. The heatmap further demonstrates the sparsity of the underlying interaction matrix, with positive drug–side effect associations representing only a small fraction of all possible combinations. Collectively, these visualisations highlight the heterogeneous nature of ADR profiles and the pronounced class imbalance characteristic of the prediction task.
+Given that the majority of the proposed models rely on similarity between drug profiles, Figure 4 presents a heatmap illustrating drug similarity based on shared side-effect profiles. Distinct clustering patterns are observed, suggesting that subsets of drugs share similar adverse reaction profiles. The heatmap further demonstrates the sparsity of the underlying interaction matrix, with positive drug–side effect associations representing only a small fraction of all possible combinations. Collectively, these visualisations highlight the heterogeneous nature of ADR profiles and the pronounced class imbalance characteristic of the prediction task.
 
-```{r fig-se-heatmap, echo=FALSE, fig.cap="Drug Similarity Heatmap", out.width="70%", fig.align="center"}
+```{r fig-se-heatmap, echo=FALSE, fig.cap="Drug Similarity Heatmap", out.width="100%", fig.align="center"}
 knitr::include_graphics("figures/drug_similarity.png")
 ```
 
@@ -183,12 +189,13 @@ kable(
 
 Among all evaluated approaches, VKR NMF achieved the highest mean AUROC (0.9183 ± 0.0027) together with a mean AUPR of 0.4230 ± 0.0033, indicating the strongest overall discrimination between positive and negative ADR associations. VKR Weighted NMF produced the highest mean AUPR (0.5001 ± 0.0022), while achieving a mean AUROC of 0.8551 ± 0.0035. VKR SVD also demonstrated strong and consistent performance across all five folds, obtaining a mean AUROC of 0.9098 ± 0.0033 and a mean AUPR of 0.4341 ± 0.0049. The Naïve Baseline achieved the second-highest mean AUROC (0.9101 ± 0.0024), although its mean AUPR (0.3584 ± 0.0075) was considerably lower than those of the VKR-based methods. Kernel Regression and SVM RBF demonstrated intermediate performance across both evaluation metrics, whereas SVM Linear produced the lowest overall predictive performance, with a mean AUROC of 0.7955 ± 0.0097 and a mean AUPR of 0.3122 ± 0.0124.
 
-Figure 4 presents the variation of precision, recall, and F1 score for the VKR NMF model across different decision thresholds. As the decision threshold increases, recall decreases while precision generally increases, illustrating the trade-off between identifying true ADR associations and reducing false positive predictions. The F1 score, which balances precision and recall, reaches its maximum value of 0.4549 at a threshold of 0.2265, corresponding to a precision of 0.4355 and a recall of 0.4760. The optimal threshold is considerably lower than the conventional value of 0.5, indicating that a lower decision boundary provides a more balanced prediction performance for this highly imbalanced ADR dataset.
-```{r fig-precision-recall, echo=FALSE, fig.cap="Precision Recall Curve", out.width="70%", fig.align="center"}
-knitr::include_graphics("figures/2a.png")
+Figure 5 presents the Receiver Operating Characteristic (ROC) curves for all evaluated methods. VKR NMF achieved the strongest overall discrimination between positive and negative ADR associations, producing the highest AUROC among all evaluated approaches. VKR SVD and the Naïve Baseline also demonstrated competitive ROC performance, whereas SVM Linear exhibited the weakest discrimination.
+
+```{r fig-roc, echo=FALSE, fig.cap="ROC Curve for all methods", out.width="90%", fig.align="center"}
+knitr::include_graphics("figures/2b.png")
 ```
 
-Figure 5 presents the sensitivity and specificity of each evaluated method across decision thresholds ranging from 0.1 to 0.9. The heatmaps illustrate each model's ability to correctly identify true ADR associations (sensitivity) while correctly rejecting negative associations (specificity).
+Figure 6 presents the sensitivity and specificity of each evaluated method across decision thresholds ranging from 0.1 to 0.9. The heatmaps illustrate each model's ability to correctly identify true ADR associations (sensitivity) while correctly rejecting negative associations (specificity).
 Most models follow the expected pattern in which sensitivity decreases as the decision threshold increases, while specificity increases. The Naïve Baseline, Kernel Regression, SVM variants, VKR NMF, and VKR SVD all exhibit high sensitivity at lower thresholds, followed by a gradual decline as more stringent decision boundaries are applied. By a threshold of 0.5, sensitivity for these models has decreased substantially, whereas specificity exceeds 0.99, indicating a strong ability to avoid false positive predictions.
 In contrast, VKR Weighted NMF displays a markedly different behaviour. Across the entire threshold range, it maintains substantially higher sensitivity than the remaining methods, achieving 0.976 at a threshold of 0.1 and remaining at 0.918 even at a threshold of 0.9. This high sensitivity is accompanied by comparatively lower specificity, which increases from 0.287 at threshold 0.1 to 0.763 at threshold 0.9. The heatmaps therefore demonstrate the distinct operating characteristics of VKR Weighted NMF relative to the other evaluated approaches.
 
@@ -196,10 +203,10 @@ In contrast, VKR Weighted NMF displays a markedly different behaviour. Across th
 knitr::include_graphics("figures/heatmap.png")
 ```
 
-Figure 6 presents the Receiver Operating Characteristic (ROC) curves for all evaluated methods. VKR NMF achieved the strongest overall discrimination between positive and negative ADR associations, producing the highest AUROC among all evaluated approaches. VKR SVD and the Naïve Baseline also demonstrated competitive ROC performance, whereas SVM Linear exhibited the weakest discrimination.
+Figure 7 presents the variation of precision, recall, and F1 score for the VKR NMF model across different decision thresholds. As the decision threshold increases, recall decreases while precision generally increases, illustrating the trade-off between identifying true ADR associations and reducing false positive predictions. The F1 score, which balances precision and recall, reaches its maximum value of 0.4549 at a threshold of 0.2265, corresponding to a precision of 0.4355 and a recall of 0.4760. The optimal threshold is considerably lower than the conventional value of 0.5, indicating that a lower decision boundary provides a more balanced prediction performance for this highly imbalanced ADR dataset.
 
-```{r fig-roc, echo=FALSE, fig.cap="ROC Curve for all methods", out.width="70%", fig.align="center"}
-knitr::include_graphics("figures/2b.png")
+```{r fig-precision-recall, echo=FALSE, fig.cap="Precision Recall Curve", out.width="70%", fig.align="center"}
+knitr::include_graphics("figures/2a.png")
 ```
 
 To evaluate the consistency of the results across different data partitions, an additional five-fold cross-validation was conducted independently of the hold-out evaluation
@@ -238,7 +245,7 @@ kable(auroc_full, caption = "AUROC scores across five folds with mean ± standar
       col.names = c("Method", "F1", "F2", "F3", "F4", "F5", "Mean SD")
       )
 ```
-\vspace{-4cm}
+
 ```{r, echo=FALSE}
 aupr_full <- data.frame(
   Method = c(
@@ -272,15 +279,16 @@ kable(aupr_full, caption = "AUPR scores across five folds with mean ± standard 
       col.names = c("Method", "F1", "F2", "F3", "F4", "F5", "Mean SD")
       )
 ```
-\vspace{-1cm} 
+
 Tables 3 and 4 present the five-fold cross-validation results for all evaluated methods, reporting AUROC and AUPR scores for each fold along with their corresponding mean and standard deviation. Across the five folds, VKR Weighted NMF achieved the highest mean AUPR (0.5001 ± 0.0022), clearly outperforming all other evaluated methods in terms of precision–recall performance, while maintaining a competitive AUROC of 0.8551 ± 0.0035. VKR NMF achieved the highest mean AUROC (0.9183 ± 0.0027), together with a mean AUPR of 0.4230 ± 0.0033, indicating strong overall discrimination. VKR SVD also demonstrated consistently strong performance, with a mean AUROC of 0.9098 ± 0.0033 and a mean AUPR of 0.4341 ± 0.0049.
 In comparison, the Naïve Baseline achieved a mean AUROC of 0.9101 ± 0.0024 but a substantially lower mean AUPR of 0.3584 ± 0.0075, indicating weaker performance under imbalanced conditions. Kernel Regression obtained a mean AUROC of 0.8745 ± 0.0051 and a mean AUPR of 0.4155 ± 0.0051, while SVM RBF achieved 0.9001 ± 0.0041 and 0.3919 ± 0.0068 respectively. SVM Linear recorded the lowest performance overall, with a mean AUROC of 0.7955 ± 0.0097 and a mean AUPR of 0.3122 ± 0.0124.
 
-```{r fig-app, echo=FALSE, fig.cap="Interactive Application For ADR Prediction", out.width="70%", fig.align="center"}
+To further translate these findings into a practically usable form, an interactive web application was developed to communicate model predictions beyond the scope of static evaluation metrics. This application enables end users to input a drug name and receive a ranked list of predicted adverse drug reactions generated by the best-performing model. Figures 7 and 8 present screenshots of this application, illustrating its interface and the structure of its output. The application can be run locally; the corresponding source code, datasets, and deployment instructions are provided in the paper's accompanying repository. [GitHub repository](https://github.com/arshad4387/ADR-Prediction)
+
+```{r fig-app, echo=FALSE, fig.cap="Interactive Application For ADR Prediction", out.width="90%", fig.align="center"}
 knitr::include_graphics("figures/app1.png")
 knitr::include_graphics("figures/app2.png")
 ```
-To further translate these results and communicate the findings in a more practical and accessible form, an application has been developed to demonstrate the predictive capability of the best-performing model. Figures 7 and 8 present snapshots of this interactive web application, which allows users to input a drug and obtain a ranked list of predicted adverse drug reactions. The app can be run locally where the code, datasets, and deployment steps are all available in the paper’s. [GitHub repository](https://github.com/arshad4387/ADR-Prediction)
 
 # Discussion
 
